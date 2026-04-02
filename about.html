@@ -63,11 +63,11 @@
           <div class="div-line"></div>
         </div>
 
-        <div style="font-family:var(--font-mono);font-size:7px;letter-spacing:1px;color:var(--text-dim);margin-bottom:16px;">last updated: <span style="color:var(--green);">april 2026</span> · <a href="/admin.html?editabout=1" id="editNowLink" style="display:none;color:var(--purple);">edit ✏</a></div>
+        <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;color:var(--text-muted);margin-bottom:16px;">last updated: <span style="color:var(--green);" id="nowUpdatedLabel">april 2026</span> · <a href="/admin.html?editabout=1" id="editNowLink" style="display:none;color:var(--purple);">edit ✏</a></div>
 
         <div style="margin-bottom:16px;">
           <div class="sb-label">currently grinding</div>
-          <div class="now-item"><div class="now-dot" style="background:var(--purple);"></div><div>distributed systems — deep in consensus protocols, questioning everything</div></div>
+          
           <div class="now-item"><div class="now-dot" style="background:var(--blue);"></div><div>DSA grind — NeetCode roadmap, 1.5 hrs/day, some things are clicking</div></div>
           <div class="now-item"><div class="now-dot" style="background:var(--pink);"></div><div>building this blog — nuon supervised the entire process</div></div>
         </div>
@@ -145,3 +145,32 @@ init();
 </script>
 </body>
 </html>
+<script>
+// patch: load about.json and render dynamic sections
+(async function(){
+  try{
+    const r=await fetch('/posts/about.json');
+    if(!r.ok) return;
+    const d=await r.json();
+    // prose
+    const proseEl=document.querySelector('.about-prose:nth-child(2)');
+    // moods override
+    const moods=d.moods||['exhausted','uglycrying'];
+    document.getElementById('aboutMoodGhosts').innerHTML=moods.map(m=>getMoodGhost(m,30,34)).join('');
+    document.getElementById('aboutMoodNames').innerHTML=moods.map(m=>`<div class="mood-name">${m}</div>`).join('');
+    // grinding
+    const grindEl=document.getElementById('grindingItems');
+    if(grindEl&&d.grinding) grindEl.innerHTML=d.grinding.map(g=>`
+      <div id="grindingItems"></div><div style="display:none"><div class="now-item"><div class="now-dot" style="background:var(--purple);"></div><div>${g}</div></div>`).join('');
+    // reading
+    const readEl=document.getElementById('readingItems');
+    if(readEl&&d.reading) readEl.innerHTML=d.reading.map(g=>`
+      <div class="now-item"><div class="now-dot" style="background:var(--blue);"></div><div>${g}</div></div>`).join('');
+    // updated
+    if(d.updated){
+      const upEl=document.getElementById('nowUpdatedLabel');
+      if(upEl) upEl.textContent=d.updated;
+    }
+  }catch(e){}
+})();
+</script>
