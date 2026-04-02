@@ -9,75 +9,68 @@
 <canvas id="starCanvas"></canvas>
 <div class="page-wrap">
 <div id="nav-root"></div>
+<div class="nav-spacer"></div>
 <div class="page-body">
   <div id="sidebar-root"></div>
   <main class="main">
-    <div class="hero" id="heroRoot">
-      <div class="hero-accountability">// accountability blog</div>
-      <div class="hero-vol">vol. 1</div>
-      <div class="hero-h1">learning arc or<br>villain origin<br>story.</div>
-      <div class="chaos-zone" id="chaosZone"></div>
+    <div class="hero">
+      <div class="hero-top">
+        <div class="hero-text">
+          <div class="hero-accountability">// accountability blog</div>
+          <div class="hero-vol">vol. 1</div>
+          <div class="hero-h1">learning arc or<br>villain origin<br>story.</div>
+        </div>
+        <div class="hero-nuon float" id="heroNuon"></div>
+      </div>
+      <div class="ticker-zone" id="tickerZone"></div>
     </div>
-
     <div id="pinned-root"></div>
     <div class="divider"><span class="div-label">recent</span><div class="div-line"></div></div>
     <div class="cards-grid" id="posts-root"></div>
   </main>
 </div>
+<!-- mobile sidebar toggle button -->
+<button onclick="toggleMobileSidebar()" style="display:none;position:fixed;bottom:20px;left:20px;z-index:160;width:44px;height:44px;border-radius:50%;background:var(--purple-dark);border:1px solid var(--purple);color:var(--purple);font-size:18px;cursor:pointer;align-items:center;justify-content:center;" id="mobileSbBtn">≡</button>
 </div>
-
 <script src="/assets/js/main.js"></script>
 <script>
-const CHAOS_QUOTES = [
-  {t:'error 404: consistency not found',r:1.5,x:'6px',y:4},
-  {t:'sudo make me consistent',r:-2,x:'28px',y:24},
-  {t:'this will make sense eventually (threat)',r:1,x:'4px',y:46},
-  {t:'gaslighting myself into understanding',r:-1.5,x:'20px',y:66},
-  {t:"ctrl + z but for life pls",r:2,x:'6px',y:86},
-  {t:"trust the process (i don't)",r:-1,x:'24px',y:106},
-  {t:'skill issue (fixing)',r:1.2,x:'4px',y:122},
-  {t:'one concept away from clarity',r:-1.8,x:'30px',y:140},
-];
-
 async function init(){
-  document.getElementById('nav-root').innerHTML = renderNav();
+  document.getElementById('nav-root').innerHTML=renderNav();
+  // show mobile sidebar btn
+  const btn=document.getElementById('mobileSbBtn');
+  if(window.innerWidth<=900){btn.style.display='flex';}
+  window.addEventListener('resize',()=>{btn.style.display=window.innerWidth<=900?'flex':'none';});
 
-  const posts = await fetchPosts();
+  const [posts,about,tags]=await Promise.all([fetchPosts(),fetchAbout(),fetchTags()]);
 
-  // sidebar
-  const about = await fetchAbout();
-  document.getElementById('sidebar-root').innerHTML = await renderSidebar(posts, about.moods||['exhausted','uglycrying']);
+  document.getElementById('sidebar-root').innerHTML=await renderSidebar(posts,about.moods);
+  initMobileSidebar();
+  applyPfp([document.getElementById('pfpEl')]);
 
-  // chaos quotes animated
-  const zone = document.getElementById('chaosZone');
-  zone.innerHTML = CHAOS_QUOTES.map(q=>`
-    <div class="chaos-q" style="right:${q.x};top:${q.y}px;transform:rotate(${q.r}deg);" data-r="${q.r}" data-y="${q.y}">${q.t}</div>
-  `).join('');
-  initChaosAnimation();
+  // hero nuon
+  document.getElementById('heroNuon').innerHTML=G.base(120,138);
+
+  // tickers
+  initTickers('tickerZone');
 
   // pinned
-  const pinned = posts.filter(p=>p.pinned&&p.published);
+  const pinned=posts.filter(p=>p.pinned&&p.published);
   if(pinned.length){
-    document.getElementById('pinned-root').innerHTML = `
+    const cards=await Promise.all(pinned.map(p=>renderPostCard(p,true)));
+    document.getElementById('pinned-root').innerHTML=`
       <div class="divider"><span class="div-label">📌 pinned</span><div class="div-line"></div></div>
-      <div class="cards-grid">${pinned.map(p=>renderPostCard(p,true)).join('')}</div>
+      <div class="cards-grid">${cards.join('')}</div>
       <div style="margin-bottom:24px;"></div>`;
   }
 
-  // recent (not pinned)
-  const recent = posts.filter(p=>p.published&&!p.pinned).slice(0,6);
-  document.getElementById('posts-root').innerHTML = recent.map(p=>renderPostCard(p)).join('');
+  // recent
+  const recent=posts.filter(p=>p.published&&!p.pinned).slice(0,6);
+  const recentCards=await Promise.all(recent.map(p=>renderPostCard(p)));
+  document.getElementById('posts-root').innerHTML=recentCards.join('')||`<div style="grid-column:1/-1;text-align:center;padding:40px;font-family:var(--font-mono);font-size:12px;color:var(--t4);">no posts yet — go write something 👻</div>`;
 
-  // admin bar
   if(isAdmin()){
-    document.querySelector('.page-wrap').insertAdjacentHTML('afterbegin',`
-      <div class="admin-bar">
-        <span class="admin-bar-label">// admin mode active</span>
-        <a href="/admin.html" class="adm-btn btn-save" style="text-decoration:none;">open admin →</a>
-        <button class="adm-btn" onclick="adminLogout();location.reload();" style="background:var(--bg2);color:var(--t3);border:1px solid var(--border);">logout</button>
-      </div>`);
+    document.querySelector('.page-wrap').insertAdjacentHTML('afterbegin',`<div class="admin-bar"><span class="admin-bar-label">// admin mode</span><a href="/admin.html" class="adm-btn btn-save" style="text-decoration:none;">open admin →</a><button class="adm-btn" onclick="adminLogout();location.reload();" style="background:var(--bg2);color:var(--t3);border:1px solid var(--border);">logout</button></div>`);
   }
-
   initStars();
 }
 init();

@@ -9,15 +9,11 @@
 <canvas id="starCanvas"></canvas>
 <div class="page-wrap">
 <div id="nav-root"></div>
-<main class="main" style="max-width:900px;margin:0 auto;padding:28px 36px;">
-  <div class="filter-bar">
+<div class="nav-spacer"></div>
+<main class="main" style="max-width:900px;margin:0 auto;">
+  <div class="filter-bar" id="filterBar">
     <span class="filter-label">filter ·</span>
     <span class="pill active-filter" id="pill-all" onclick="setFilter('all',this)">all</span>
-    <span class="pill pill-systems" id="pill-systems" onclick="setFilter('systems',this)">#systems</span>
-    <span class="pill pill-dsa" id="pill-dsa" onclick="setFilter('dsa',this)">#dsa</span>
-    <span class="pill pill-rant" id="pill-rant" onclick="setFilter('rant',this)">#rant</span>
-    <span class="pill pill-daily-log" id="pill-daily-log" onclick="setFilter('daily-log',this)">#daily-log</span>
-    <span class="pill pill-milestone" id="pill-milestone" onclick="setFilter('milestone',this)">#milestone</span>
     <input class="search-input" placeholder="search..." id="searchInput" oninput="doSearch()"/>
   </div>
   <div class="results-bar">
@@ -29,57 +25,55 @@
 </div>
 <script src="/assets/js/main.js"></script>
 <script>
-let allPosts=[], activeFilter='all', sortAsc=false;
+let allPosts=[],allTags=[],activeFilter='all',sortAsc=false;
 
 async function init(){
-  document.getElementById('nav-root').innerHTML = renderNav('blog');
-  allPosts = await fetchPosts();
-  const params = new URLSearchParams(location.search);
-  const tag = params.get('tag');
-  if(tag) setFilter(tag, document.getElementById('pill-'+tag));
+  document.getElementById('nav-root').innerHTML=renderNav('blog');
+  [allPosts,allTags]=await Promise.all([fetchPosts(),fetchTags()]);
+
+  // build filter pills from tags
+  const cats=allTags.filter(t=>t.isCategory);
+  const fb=document.getElementById('filterBar');
+  cats.forEach(t=>{
+    const span=document.createElement('span');
+    span.className='pill';
+    span.id='pill-'+t.id;
+    span.style.color=t.color;
+    span.style.borderColor=t.color+'55';
+    span.style.background=t.bg;
+    span.textContent='#'+t.label;
+    span.onclick=()=>setFilter(t.id,span);
+    fb.insertBefore(span,document.getElementById('searchInput'));
+  });
+
+  const params=new URLSearchParams(location.search);
+  const tag=params.get('tag');
+  if(tag){const el=document.getElementById('pill-'+tag);setFilter(tag,el||null);}
   else render();
   initStars();
 }
 
-function setFilter(cat, el){
-  activeFilter = cat;
-  document.querySelectorAll('.filter-bar .pill').forEach(p=>{
-    p.classList.remove('active-filter');
-    // restore base color
-    const base = p.id.replace('pill-','');
-    p.className = `pill pill-${base}`;
-  });
-  document.getElementById('pill-all').className='pill pill-all';
-  if(el){el.classList.add('active-filter');}
+function setFilter(cat,el){
+  activeFilter=cat;
+  document.querySelectorAll('.filter-bar .pill').forEach(p=>p.classList.remove('active-filter'));
+  if(el)el.classList.add('active-filter');
   render();
 }
+function doSearch(){render(document.getElementById('searchInput').value.toLowerCase());}
+function toggleSort(){sortAsc=!sortAsc;document.getElementById('sortLabel').textContent=sortAsc?'oldest':'newest';render();}
 
-function doSearch(){ render(document.getElementById('searchInput').value.toLowerCase()); }
-function toggleSort(){ sortAsc=!sortAsc; document.getElementById('sortLabel').textContent=sortAsc?'oldest':'newest'; render(); }
-
-function render(q=''){
-  let posts = allPosts.filter(p=>p.published);
-  if(activeFilter!=='all') posts = posts.filter(p=>p.category===activeFilter||p.tags?.includes(activeFilter));
-  if(q) posts = posts.filter(p=>p.title.toLowerCase().includes(q)||p.excerpt?.toLowerCase().includes(q));
+async function render(q=''){
+  let posts=allPosts.filter(p=>p.published);
+  if(activeFilter!=='all')posts=posts.filter(p=>p.category===activeFilter||p.tags?.includes(activeFilter));
+  if(q)posts=posts.filter(p=>p.title.toLowerCase().includes(q)||p.excerpt?.toLowerCase().includes(q));
   posts.sort((a,b)=>sortAsc?a.date.localeCompare(b.date):b.date.localeCompare(a.date));
-  document.getElementById('countEl').textContent = posts.length;
-
-  if(!posts.length){
-    document.getElementById('feedRoot').innerHTML=`
-      <div style="grid-column:1/-1;text-align:center;padding:60px 0;">
-        ${G.exhausted(50,58)}
-        <div style="font-family:var(--font-mono);font-size:12px;color:var(--t4);margin-top:14px;">no posts found</div>
-      </div>`;
-    return;
-  }
-
-  // featured first card full width, rest 2-col grid
-  const [first,...rest] = posts;
-  document.getElementById('feedRoot').innerHTML =
-    `<div class="feed-featured">${renderPostCard(first,first.pinned)}</div>`+
-    rest.map(p=>renderPostCard(p,p.pinned)).join('');
+  document.getElementById('countEl').textContent=posts.length;
+  if(!posts.length){document.getElementById('feedRoot').innerHTML=`<div style="grid-column:1/-1;text-align:center;padding:60px;font-family:var(--font-mono);font-size:12px;color:var(--t4);">${G.exhausted(44,50)}<br><br>no posts found</div>`;return;}
+  const [first,...rest]=posts;
+  const firstCard=await renderPostCard(first,first.pinned);
+  const restCards=await Promise.all(rest.map(p=>renderPostCard(p,p.pinned)));
+  document.getElementById('feedRoot').innerHTML=`<div class="feed-featured">${firstCard}</div>`+restCards.join('');
 }
-
 init();
 </script>
 </body>

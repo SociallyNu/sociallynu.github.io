@@ -11,114 +11,95 @@ body{overflow:hidden;}
 .adm-title{font-family:var(--font-mono);font-size:11px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;font-weight:700;}
 .adm-title em{color:var(--pink);font-style:normal;}
 .adm-tr{display:flex;align-items:center;gap:10px;}
-.status{font-family:var(--font-mono);font-size:10px;color:var(--green);display:flex;align-items:center;gap:5px;font-weight:700;}
 .status-dot{width:7px;height:7px;border-radius:50%;background:var(--green);}
 .adm-body{display:grid;grid-template-columns:240px 1fr;overflow:hidden;}
-/* sidebar */
 .adm-sb{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
 .adm-sb-tabs{display:flex;border-bottom:1px solid var(--border);flex-shrink:0;}
-.adm-stab{font-family:var(--font-mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:9px 0;flex:1;text-align:center;background:none;border:none;border-bottom:2px solid transparent;color:var(--t3);cursor:pointer;font-weight:700;transition:color 0.15s;}
+.adm-stab{font-family:var(--font-mono);font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:9px 0;flex:1;text-align:center;background:none;border:none;border-bottom:2px solid transparent;color:var(--t3);cursor:pointer;font-weight:700;}
 .adm-stab.active{color:var(--purple);border-bottom-color:var(--purple);}
 .adm-sb-panel{flex:1;overflow-y:auto;display:none;flex-direction:column;}
 .adm-sb-panel.show{display:flex;}
 .adm-sb-top{padding:12px 14px;border-bottom:1px solid var(--border);flex-shrink:0;}
-.adm-new-btn{width:100%;font-family:var(--font-mono);font-size:11px;padding:9px;background:var(--bg3);color:var(--purple);border:1px dashed var(--purple-dark);border-radius:6px;cursor:pointer;font-weight:700;transition:all 0.15s;}
-.adm-new-btn:hover{background:#0d0a1e;}
-.adm-search{width:100%;font-family:var(--font-mono);font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;color:var(--t2);outline:none;margin-top:8px;transition:border-color 0.2s;}
-.adm-search:focus{border-color:var(--purple-dark);}
-/* main editor area */
+.adm-new-btn{width:100%;font-family:var(--font-mono);font-size:11px;padding:9px;background:var(--bg3);color:var(--purple);border:1px dashed var(--purple-dark);border-radius:6px;cursor:pointer;font-weight:700;}
+.adm-search{width:100%;font-family:var(--font-mono);font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:7px 10px;color:var(--t2);outline:none;margin-top:8px;}
 .adm-main{display:flex;flex-direction:column;overflow:hidden;}
 .meta-bar{padding:10px 18px;border-bottom:1px solid var(--border2);display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0;background:#060810;}
 .title-inp{font-family:var(--font-body);font-size:16px;background:transparent;border:none;outline:none;color:var(--t1);flex:1;min-width:200px;}
 .title-inp::placeholder{color:var(--t5);}
-.sel-inp{font-family:var(--font-mono);font-size:10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--t2);outline:none;cursor:pointer;}
+.sel-inp{font-family:var(--font-mono);font-size:10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--t2);outline:none;}
 .tag-inp{font-family:var(--font-mono);font-size:10px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--t2);outline:none;width:110px;}
-.tag-inp::placeholder{color:var(--t5);}
-.pin-label{font-family:var(--font-mono);font-size:10px;color:var(--t3);display:flex;gap:5px;align-items:center;cursor:pointer;white-space:nowrap;}
-/* toolbar */
+.pin-label{font-family:var(--font-mono);font-size:10px;color:var(--t3);display:flex;gap:5px;align-items:center;cursor:pointer;}
+.thumb-preview{width:42px;height:42px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px;}
+.thumb-preview:hover{border-color:var(--purple-dark);}
+.thumb-preview img{width:100%;height:100%;object-fit:cover;}
 .toolbar{padding:7px 18px;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:3px;flex-shrink:0;flex-wrap:wrap;background:#060810;}
 .tb-grp{display:flex;gap:2px;padding-right:8px;border-right:1px solid var(--border);margin-right:3px;align-items:center;}
 .tb-grp:last-child{border-right:none;}
-.tb-lbl{font-family:var(--font-mono);font-size:8px;letter-spacing:1px;color:var(--t5);text-transform:uppercase;padding:0 3px;align-self:center;}
-.tb-btn{font-family:var(--font-mono);font-size:11px;padding:4px 9px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;color:var(--t2);cursor:pointer;transition:all 0.15s;white-space:nowrap;}
+.tb-lbl{font-family:var(--font-mono);font-size:8px;letter-spacing:1px;color:var(--t5);text-transform:uppercase;padding:0 3px;}
+.tb-btn{font-family:var(--font-mono);font-size:11px;padding:4px 8px;background:var(--bg2);border:1px solid var(--border);border-radius:3px;color:var(--t2);cursor:pointer;white-space:nowrap;}
 .tb-btn:hover{background:#12102a;color:var(--purple);border-color:var(--purple-dark);}
-/* table toolbar */
-.tbl-tb{display:none;align-items:center;gap:4px;padding:6px 18px;border-bottom:1px solid var(--border2);background:#050710;flex-wrap:wrap;flex-shrink:0;}
-.tbl-tb.show{display:flex;}
-/* tabs write/preview/html */
 .ed-tabs{display:flex;border-bottom:1px solid var(--border2);flex-shrink:0;}
-.ed-tab{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:8px 18px;color:var(--t4);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-weight:700;transition:color 0.15s;}
+.ed-tab{font-family:var(--font-mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:8px 18px;color:var(--t4);cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none;font-weight:700;}
 .ed-tab.active{color:var(--purple);border-bottom-color:var(--purple);}
 .ed-wrap{flex:1;overflow:hidden;display:flex;min-height:0;}
 .preview-pane{flex:1;padding:18px 22px;overflow-y:auto;border-left:1px solid var(--border);display:none;}
 .preview-pane.show{display:block;}
 .html-pane{flex:1;padding:18px;overflow-y:auto;border-left:1px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--t3);line-height:1.7;white-space:pre-wrap;word-break:break-all;display:none;}
 .html-pane.show{display:block;}
-/* bottom bar */
 .adm-bot{padding:7px 18px;border-top:1px solid var(--border2);display:flex;gap:18px;align-items:center;flex-shrink:0;background:#060810;}
 .bst{font-family:var(--font-mono);font-size:11px;color:var(--t3);}
 .bst span{color:var(--t2);}
-/* post items */
 .pi-wrap{display:flex;align-items:flex-start;gap:4px;width:100%;}
 .pi-body{flex:1;min-width:0;}
-.pi-del{background:#1a0810;color:var(--pink);font-family:var(--font-mono);font-size:9px;padding:3px 8px;border-radius:3px;cursor:pointer;border:none;flex-shrink:0;margin-top:2px;transition:background 0.15s;}
-.pi-del:hover{background:#2a0c18;}
-/* thumbnail upload in meta bar */
-.thumb-preview{width:40px;height:40px;border-radius:4px;background:var(--bg3);border:1px solid var(--border);overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;transition:border-color 0.2s;}
-.thumb-preview:hover{border-color:var(--purple-dark);}
-.thumb-preview img{width:100%;height:100%;object-fit:cover;}
+.settings-panel-inner{padding:16px;display:flex;flex-direction:column;gap:14px;}
+.settings-section-title{font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;font-weight:700;margin-bottom:8px;}
 </style>
 </head>
 <body>
-
-<!-- HIDDEN FILE INPUTS -->
-<input type="file" id="imgUploadInput" accept="image/*" style="display:none" onchange="handleFileUpload(event,'img')"/>
-<input type="file" id="gifUploadInput" accept="image/gif,image/*" style="display:none" onchange="handleFileUpload(event,'img')"/>
-<input type="file" id="vidUploadInput" accept="video/*" style="display:none" onchange="handleFileUpload(event,'vid')"/>
-<input type="file" id="thumbUploadInput" accept="image/*" style="display:none" onchange="handleThumbUpload(event)"/>
+<input type="file" id="imgUp" accept="image/*" style="display:none" onchange="handleMedia(event,'img')"/>
+<input type="file" id="gifUp" accept="image/gif,image/*" style="display:none" onchange="handleMedia(event,'img')"/>
+<input type="file" id="vidUp" accept="video/*" style="display:none" onchange="handleMedia(event,'vid')"/>
+<input type="file" id="thumbUp" accept="image/*" style="display:none" onchange="handleThumb(event)"/>
+<input type="file" id="pfpUp" accept="image/*" style="display:none" onchange="handlePfpUpload(event)"/>
 
 <!-- LOGIN -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <div class="login-logo">SociallyNu<em>.</em></div>
-    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--t3);font-weight:700;">ADMIN ACCESS</div>
+    <div class="login-pfp-wrap" onclick="document.getElementById('pfpUp').click()" title="click to change profile picture">
+      <div class="login-pfp" id="loginPfp">🐱</div>
+      <div class="login-pfp-edit">✏</div>
+    </div>
+    <div style="font-family:var(--font-mono);font-size:9px;color:var(--t4);text-align:center;">click pfp to change it everywhere</div>
     <input class="login-input" type="password" id="passInput" placeholder="password" onkeydown="if(event.key==='Enter')doLogin()"/>
     <button class="login-btn" onclick="doLogin()">enter the void →</button>
     <div style="width:100%;border-top:1px solid var(--border);padding-top:16px;">
       <div class="login-note" style="color:var(--purple);font-weight:700;margin-bottom:8px;">GitHub Personal Access Token</div>
-      <div class="login-note" style="text-align:left;margin-bottom:10px;line-height:1.8;">
-        Needed for saving/editing/deleting posts. Different from browser login.<br><br>
-        <strong style="color:var(--t2);">Get one:</strong> github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate → check <strong style="color:var(--purple);">repo</strong> scope → copy it<br><br>
-        Once you enter it here, it saves to your browser and you won't need to enter it again unless you clear browser data or use a different browser.
-      </div>
-      <input class="token-input" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" style="width:100%;"/>
+      <div class="login-note" style="margin-bottom:10px;">Needed for saves/edits/deletes. Get one:<br>github.com → Settings → Developer settings → Personal access tokens → Tokens (classic) → check <strong style="color:var(--purple);">repo</strong> scope → copy<br><br>Saves to browser — enter once per browser/device.</div>
+      <input class="token-input" id="tokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"/>
     </div>
-    <div class="login-note">nuon is watching. enter carefully.</div>
   </div>
 </div>
 
-<!-- ADMIN UI -->
+<!-- ADMIN -->
 <div id="adminUI" style="display:none;" class="adm-layout">
   <div class="adm-topbar">
     <div class="adm-title">// SociallyNu<em>.</em> admin</div>
     <div class="adm-tr">
-      <div class="status"><div class="status-dot"></div>nuon is watching</div>
-      <a href="/admin-about.html" class="adm-btn btn-save" style="text-decoration:none;">edit about/now ↗</a>
+      <div style="display:flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:10px;color:var(--green);font-weight:700;"><div class="status-dot"></div>nuon is watching</div>
+      <a href="/admin-about.html" class="adm-btn btn-save" style="text-decoration:none;">about/now ↗</a>
       <button class="adm-btn btn-save" onclick="saveDraft()">save draft</button>
       <button class="adm-btn btn-pub" onclick="publishPost()">publish →</button>
       <button class="adm-btn" onclick="adminLogout();location.reload();" style="background:var(--bg2);color:var(--t3);border:1px solid var(--border);">logout</button>
     </div>
   </div>
-
   <div class="adm-body">
-    <!-- SIDEBAR -->
     <div class="adm-sb">
       <div class="adm-sb-tabs">
-        <button class="adm-stab active" onclick="switchSbTab('posts',this)">posts</button>
-        <button class="adm-stab" onclick="switchSbTab('settings',this)">settings</button>
+        <button class="adm-stab active" onclick="switchSb('posts',this)">posts</button>
+        <button class="adm-stab" onclick="switchSb('tags',this)">tags</button>
+        <button class="adm-stab" onclick="switchSb('settings',this)">cfg</button>
       </div>
-
-      <!-- POSTS PANEL -->
       <div class="adm-sb-panel show" id="postsPanel">
         <div class="adm-sb-top">
           <button class="adm-new-btn" onclick="newPost()">+ new post</button>
@@ -126,65 +107,59 @@ body{overflow:hidden;}
         </div>
         <div style="flex:1;overflow-y:auto;padding:4px 0;" id="sidebarPosts"></div>
       </div>
-
-      <!-- SETTINGS PANEL -->
+      <div class="adm-sb-panel" id="tagsPanel">
+        <div id="tagManagerRoot"></div>
+      </div>
       <div class="adm-sb-panel" id="settingsPanel">
-        <div style="padding:16px;display:flex;flex-direction:column;gap:14px;">
+        <div class="settings-panel-inner">
           <div>
-            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;font-weight:700;margin-bottom:8px;">GitHub Token</div>
+            <div class="settings-section-title">GitHub Token</div>
             <input class="adm-search" id="tokenUpdate" placeholder="ghp_xxxx..." style="margin-top:0;"/>
             <button class="adm-new-btn" style="margin-top:8px;" onclick="updateToken()">save token</button>
             <div id="tokenStatus" style="font-family:var(--font-mono);font-size:9px;color:var(--t4);margin-top:6px;"></div>
           </div>
           <div style="border-top:1px solid var(--border);padding-top:14px;">
-            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;font-weight:700;margin-bottom:6px;">Quick Links</div>
-            <a href="/admin-about.html" style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--purple);padding:6px 0;border-bottom:1px solid var(--border);">edit about/now ↗</a>
-            <a href="/index.html" target="_blank" style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--t3);padding:6px 0;border-bottom:1px solid var(--border);">view site ↗</a>
-            <a href="/blog.html" target="_blank" style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--t3);padding:6px 0;">view blog ↗</a>
+            <div class="settings-section-title">Profile Picture</div>
+            <div style="display:flex;justify-content:center;margin-bottom:10px;">
+              <div class="login-pfp" id="settingsPfp" style="width:60px;height:60px;font-size:28px;" onclick="document.getElementById('pfpUp').click()" title="click to change">🐱</div>
+            </div>
+            <button class="adm-new-btn" onclick="document.getElementById('pfpUp').click()">change pfp</button>
+            <div style="font-family:var(--font-mono);font-size:9px;color:var(--t4);margin-top:6px;">stores locally in browser. same pfp shows on all pages of this site on this browser.</div>
           </div>
           <div style="border-top:1px solid var(--border);padding-top:14px;">
-            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--t3);text-transform:uppercase;font-weight:700;margin-bottom:6px;">Passwords & Config</div>
+            <div class="settings-section-title">Config (edit in code)</div>
             <div style="font-family:var(--font-mono);font-size:9px;color:var(--t4);line-height:1.8;">
-              Change in <strong style="color:var(--t2);">assets/js/main.js</strong>:<br>
-              · <span style="color:var(--purple);">ADMIN_PASSWORD</span> = your password<br>
-              · <span style="color:var(--purple);">GITHUB_REPO</span> = user/repo<br><br>
-              Change in <strong style="color:var(--t2);">admin.html</strong>:<br>
-              · <span style="color:var(--purple);">YOUR_BLOG.tumblr.com</span>
+              <strong style="color:var(--t2);">assets/js/main.js</strong>:<br>
+              · <span style="color:var(--purple);">ADMIN_PASSWORD</span><br>
+              · <span style="color:var(--purple);">GITHUB_REPO</span><br><br>
+              <strong style="color:var(--t2);">admin.html</strong>:<br>
+              · <span style="color:var(--purple);">sociallyNu.tumblr.com</span>
             </div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding-top:14px;">
+            <div class="settings-section-title">Quick Links</div>
+            <a href="/index.html" target="_blank" style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--purple);padding:6px 0;border-bottom:1px solid var(--border);">view site ↗</a>
+            <a href="/blog.html" target="_blank" style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--t3);padding:6px 0;border-bottom:1px solid var(--border);">view blog ↗</a>
+            <a href="/admin-about.html" style="display:block;font-family:var(--font-mono);font-size:10px;color:var(--t3);padding:6px 0;">edit about/now ↗</a>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- MAIN EDITOR -->
     <div class="adm-main">
       <div class="meta-bar">
-        <div class="thumb-preview" id="thumbPreview" onclick="document.getElementById('thumbUploadInput').click()" title="click to set thumbnail">🖼</div>
+        <div class="thumb-preview" id="thumbPreview" onclick="document.getElementById('thumbUp').click()" title="set thumbnail">🖼</div>
         <input class="title-inp" id="titleInput" placeholder="post title..."/>
-        <select class="sel-inp" id="catSel">
-          <option value="systems">#systems</option>
-          <option value="dsa">#dsa</option>
-          <option value="rant">#rant</option>
-          <option value="daily-log">#daily-log</option>
-          <option value="milestone">#milestone</option>
-        </select>
+        <select class="sel-inp" id="catSel"></select>
         <select class="sel-inp" id="moodSel">
-          <option value="exhausted">exhausted</option>
-          <option value="uglycrying">ugly crying</option>
-          <option value="frustrated">frustrated</option>
-          <option value="victory">victory</option>
-          <option value="smirking">smirking</option>
-          <option value="skull">skull</option>
-          <option value="crash">crash</option>
-          <option value="loop">loop</option>
-          <option value="glitch">glitch</option>
-          <option value="null">null</option>
-          <option value="bug">bug</option>
-          <option value="trace">trace</option>
-          <option value="oops">oops</option>
-          <option value="lag">lag</option>
-          <option value="gremlin">gremlin</option>
-          <option value="blink">blink</option>
+          <option value="exhausted">exhausted</option><option value="uglycrying">ugly crying</option>
+          <option value="frustrated">frustrated</option><option value="victory">victory</option>
+          <option value="smirking">smirking</option><option value="skull">skull</option>
+          <option value="crash">crash</option><option value="loop">loop</option>
+          <option value="glitch">glitch</option><option value="null">null</option>
+          <option value="bug">bug</option><option value="trace">trace</option>
+          <option value="oops">oops</option><option value="lag">lag</option>
+          <option value="gremlin">gremlin</option><option value="blink">blink</option>
         </select>
         <input class="tag-inp" id="tagInput" placeholder="extra tags..."/>
         <label class="pin-label"><input type="checkbox" id="pinnedCheck"/> 📌 pin</label>
@@ -193,55 +168,53 @@ body{overflow:hidden;}
       <div class="toolbar">
         <div class="tb-grp">
           <span class="tb-lbl">text</span>
-          <button class="tb-btn" onclick="fmt('bold')" title="Bold"><b>B</b></button>
-          <button class="tb-btn" onclick="fmt('italic')" title="Italic"><i>I</i></button>
-          <button class="tb-btn" onclick="fmt('underline')" title="Underline"><u>U</u></button>
-          <button class="tb-btn" onclick="fmt('strikeThrough')" title="Strike"><s>S</s></button>
-          <button class="tb-btn" onclick="fmtMono()" title="Monospace" style="font-family:monospace;">M</button>
+          <button class="tb-btn" onclick="fmt('bold')"><b>B</b></button>
+          <button class="tb-btn" onclick="fmt('italic')"><i>I</i></button>
+          <button class="tb-btn" onclick="fmt('underline')"><u>U</u></button>
+          <button class="tb-btn" onclick="fmt('strikeThrough')"><s>S</s></button>
+          <button class="tb-btn" onclick="fmtMono()" style="font-family:monospace;">M</button>
         </div>
         <div class="tb-grp">
           <span class="tb-lbl">heading</span>
-          <button class="tb-btn" onclick="insertHeading(1)">H1</button>
-          <button class="tb-btn" onclick="insertHeading(2)">H2</button>
-          <button class="tb-btn" onclick="insertHeading(3)">H3</button>
+          <button class="tb-btn" onclick="insertH(1)">H1</button>
+          <button class="tb-btn" onclick="insertH(2)">H2</button>
+          <button class="tb-btn" onclick="insertH(3)">H3</button>
+          <button class="tb-btn" onclick="insertH(4)">H4</button>
+          <button class="tb-btn" onclick="insertH(5)">H5</button>
+          <button class="tb-btn" onclick="insertH(6)">H6</button>
         </div>
         <div class="tb-grp">
           <span class="tb-lbl">blocks</span>
           <button class="tb-btn" onclick="insertCode()">&lt;/&gt;</button>
           <button class="tb-btn" onclick="insertQuote()">❝</button>
           <button class="tb-btn" onclick="insertLatex()">∑</button>
-          <button class="tb-btn" onclick="insertTable()" style="color:var(--blue);">⊞ table</button>
+          <button class="tb-btn" onclick="insertTable()" style="color:var(--blue);">⊞</button>
         </div>
         <div class="tb-grp">
           <span class="tb-lbl">media</span>
-          <button class="tb-btn" onclick="document.getElementById('imgUploadInput').click()">img ↑</button>
-          <button class="tb-btn" onclick="document.getElementById('gifUploadInput').click()">gif ↑</button>
-          <button class="tb-btn" onclick="insertVideoMedia()">vid ↑</button>
-          <button class="tb-btn" onclick="insertLink()">🔗 link</button>
-          <button class="tb-btn" onclick="toggleGhostPicker(event)" id="ghostPickerBtn">👻 nuon</button>
+          <button class="tb-btn" onclick="document.getElementById('imgUp').click()">img ↑</button>
+          <button class="tb-btn" onclick="document.getElementById('gifUp').click()">gif ↑</button>
+          <button class="tb-btn" onclick="insertVideo()">vid</button>
+          <button class="tb-btn" onclick="insertLink()">🔗</button>
+          <button class="tb-btn" onclick="toggleGhostPicker(event)" id="ghostPickerBtn">👻</button>
         </div>
         <div class="tb-grp">
           <span class="tb-lbl">post</span>
-          <button class="tb-btn" onclick="togglePin()">📌 pin</button>
-          <button class="tb-btn" onclick="crosspostTumblr()">tumblr ↗</button>
+          <button class="tb-btn" onclick="document.getElementById('pinnedCheck').checked=!document.getElementById('pinnedCheck').checked">📌</button>
+          <button class="tb-btn" onclick="crosspostTumblr()">tumblr↗</button>
         </div>
       </div>
 
-      <!-- TABLE TOOLBAR (auto shows when cursor in table) -->
-      <div class="tbl-tb" id="tblToolbar">
-        <span class="tbl-toolbar-label">table ·</span>
-        <button class="tbl-btn" onclick="tblAddRow(true)">+ row ↓</button>
-        <button class="tbl-btn" onclick="tblAddRow(false)">+ row ↑</button>
-        <button class="tbl-btn" onclick="tblAddCol(true)">+ col →</button>
-        <button class="tbl-btn" onclick="tblAddCol(false)">+ col ←</button>
-        <button class="tbl-btn danger" onclick="tblDelRow()">− row</button>
-        <button class="tbl-btn danger" onclick="tblDelCol()">− col</button>
-        <button class="tbl-btn" onclick="tblMerge()">merge</button>
-        <button class="tbl-btn" onclick="tblSplit()">split</button>
-        <button class="tbl-btn danger" onclick="tblDelTable()">✕ table</button>
+      <div class="tbl-toolbar" id="tblToolbar">
+        <span class="tbl-toolbar-label">table·</span>
+        <button class="tbl-btn" onclick="tblRow(true)">+row↓</button>
+        <button class="tbl-btn" onclick="tblRow(false)">+row↑</button>
+        <button class="tbl-btn" onclick="tblCol(true)">+col→</button>
+        <button class="tbl-btn" onclick="tblCol(false)">+col←</button>
+        <button class="tbl-btn danger" onclick="tblDelRow()">−row</button>
+        <button class="tbl-btn danger" onclick="tblDelCol()">−col</button>
+        <button class="tbl-btn danger" onclick="tblDelTable()">✕tbl</button>
       </div>
-
-      <!-- GHOST PICKER (appended to body via JS) -->
 
       <div class="ed-tabs">
         <button class="ed-tab active" onclick="switchTab('write',this)">write</button>
@@ -250,14 +223,14 @@ body{overflow:hidden;}
       </div>
 
       <div class="ed-wrap">
-        <div class="editor post-content" id="editor" contenteditable="true" data-placeholder="start writing..."></div>
+        <div class="editor" id="editor" contenteditable="true" data-placeholder="start writing..."></div>
         <div class="preview-pane post-content" id="previewPane"></div>
         <div class="html-pane" id="htmlPane"></div>
       </div>
 
       <div class="adm-bot">
-        <div class="bst">words: <span id="wordCount">0</span></div>
-        <div class="bst">read time: <span id="readTime">~0 min</span></div>
+        <div class="bst">words: <span id="wc">0</span></div>
+        <div class="bst">read: <span id="rt">~0 min</span></div>
         <div class="bst">status: <span id="statusEl" style="color:var(--yellow);">unsaved</span></div>
         <div class="bst" style="margin-left:auto;">saved: <span id="lastSaved">—</span></div>
         <div class="bst" id="currentId" style="color:var(--t4);"></div>
@@ -268,90 +241,64 @@ body{overflow:hidden;}
 
 <script src="/assets/js/main.js"></script>
 <script>
-let allPosts=[], editingId=null, currentThumb='';
-const editor = document.getElementById('editor');
+let allPosts=[],editingId=null,currentThumb='';
+const editor=document.getElementById('editor');
 
-// ── LOGIN ────────────────────────────────────────
 function doLogin(){
-  const pass = document.getElementById('passInput').value;
-  const token = document.getElementById('tokenInput').value.trim();
-  if(token) localStorage.setItem(GITHUB_TOKEN_KEY, token);
-  if(adminLogin(pass)){
-    document.getElementById('loginScreen').style.display='none';
-    document.getElementById('adminUI').style.display='grid';
-    adminInit();
-  } else {
-    const inp = document.getElementById('passInput');
-    inp.style.borderColor='var(--pink)';
-    setTimeout(()=>inp.style.borderColor='',1500);
-  }
+  const pass=document.getElementById('passInput').value;
+  const token=document.getElementById('tokenInput').value.trim();
+  if(token)localStorage.setItem(GITHUB_TOKEN_KEY,token);
+  if(adminLogin(pass)){document.getElementById('loginScreen').style.display='none';document.getElementById('adminUI').style.display='grid';adminInit();}
+  else{const i=document.getElementById('passInput');i.style.borderColor='var(--pink)';setTimeout(()=>i.style.borderColor='',1500);}
 }
-if(isAdmin()){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('adminUI').style.display='grid';
+if(isAdmin()){document.getElementById('loginScreen').style.display='none';document.getElementById('adminUI').style.display='grid';}
+
+function handlePfpUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=ev=>{setPfp(ev.target.result);applyPfp([document.getElementById('loginPfp'),document.getElementById('settingsPfp')]);};
+  reader.readAsDataURL(file);e.target.value='';
 }
 
-// ── INIT ─────────────────────────────────────────
 async function adminInit(){
-  allPosts = await fetchPosts();
+  allPosts=await fetchPosts();
+  const tags=await fetchTags();
+  // populate category dropdown
+  const cs=document.getElementById('catSel');
+  cs.innerHTML=tags.filter(t=>t.isCategory).map(t=>`<option value="${t.id}">${'#'+t.label}</option>`).join('');
   renderSidebarPosts();
   buildGhostPicker();
-  // token status
-  const t = getToken();
-  document.getElementById('tokenStatus').textContent = t ? '✓ token is set' : '⚠ no token — saves will fail';
-  document.getElementById('tokenStatus').style.color = t ? 'var(--green)' : 'var(--pink)';
-  if(document.getElementById('tokenUpdate')) document.getElementById('tokenUpdate').value = t;
-  // check edit param
-  const params = new URLSearchParams(location.search);
-  const editId = params.get('edit');
-  if(editId){ const p=allPosts.find(x=>x.id===editId); if(p) loadPost(p); }
-  editor.addEventListener('input', ()=>{ updateStats(); detectTableCtx(); });
-  editor.addEventListener('keyup', detectTableCtx);
-  editor.addEventListener('mouseup', detectTableCtx);
-  document.addEventListener('selectionchange', detectTableCtx);
+  applyPfp([document.getElementById('loginPfp'),document.getElementById('settingsPfp')]);
+  const t=getToken();
+  if(document.getElementById('tokenUpdate'))document.getElementById('tokenUpdate').value=t;
+  document.getElementById('tokenStatus').textContent=t?'✓ token set':'⚠ no token set';
+  document.getElementById('tokenStatus').style.color=t?'var(--green)':'var(--pink)';
+  const params=new URLSearchParams(location.search);
+  const editId=params.get('edit');
+  if(editId){const p=allPosts.find(x=>x.id===editId);if(p)loadPost(p);}
+  editor.addEventListener('input',()=>{updateStats();detectTableCtx();});
+  editor.addEventListener('keyup',detectTableCtx);
+  editor.addEventListener('mouseup',detectTableCtx);
+  // tag manager
+  renderTagManager('tagManagerRoot',async()=>{allPosts=await fetchPosts();renderSidebarPosts();const tags2=await fetchTags();const cs=document.getElementById('catSel');cs.innerHTML=tags2.filter(t=>t.isCategory).map(t=>`<option value="${t.id}">#${t.label}</option>`).join('');});
 }
 
-function updateToken(){
-  const v=document.getElementById('tokenUpdate').value.trim();
-  if(v){ localStorage.setItem(GITHUB_TOKEN_KEY,v); document.getElementById('tokenStatus').textContent='✓ token saved'; document.getElementById('tokenStatus').style.color='var(--green)';}
-}
-
-// ── SIDEBAR ──────────────────────────────────────
-function switchSbTab(tab,el){
-  document.querySelectorAll('.adm-stab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
-  document.getElementById('postsPanel').classList.toggle('show',tab==='posts');
-  document.getElementById('settingsPanel').classList.toggle('show',tab==='settings');
-}
+function updateToken(){const v=document.getElementById('tokenUpdate').value.trim();if(v){localStorage.setItem(GITHUB_TOKEN_KEY,v);document.getElementById('tokenStatus').textContent='✓ saved';document.getElementById('tokenStatus').style.color='var(--green)';}}
+function switchSb(tab,el){document.querySelectorAll('.adm-stab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['postsPanel','tagsPanel','settingsPanel'].forEach(id=>document.getElementById(id).classList.remove('show'));document.getElementById(tab+'Panel').classList.add('show');}
 
 function renderSidebarPosts(filter=''){
-  const cats=['systems','dsa','rant','daily-log','milestone'];
   let html='';
-  cats.forEach(cat=>{
-    const catPosts=allPosts.filter(p=>p.category===cat&&(!filter||p.title.toLowerCase().includes(filter)));
-    if(!catPosts.length) return;
-    html+=`<div class="adm-group-label"><span class="tc-${cat}">#${cat}</span><span>${catPosts.length}</span></div>`;
-    catPosts.forEach(p=>{
-      html+=`<div class="adm-post-item${editingId===p.id?' active':''}" onclick="loadPost(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-        <div class="pi-wrap">
-          <div class="pi-body">
-            <div class="adm-post-item-title">${p.pinned?'📌 ':''}${p.title}</div>
-            <div class="adm-post-meta">
-              <span>${p.date}</span>
-              <span style="color:${p.published?'var(--green)':'var(--yellow)'};">${p.published?'pub':'draft'}</span>
-            </div>
-          </div>
-          <button class="pi-del" onclick="event.stopPropagation();deletePostById('${p.id}')" title="delete">✕</button>
-        </div>
-      </div>`;
-    });
+  // group by category
+  const grouped={};
+  allPosts.forEach(p=>{if(!filter||p.title.toLowerCase().includes(filter)){if(!grouped[p.category])grouped[p.category]=[];grouped[p.category].push(p);}});
+  Object.entries(grouped).forEach(([cat,posts])=>{
+    html+=`<div class="adm-group-label"><span style="color:var(--t2);">#${cat}</span><span>${posts.length}</span></div>`;
+    posts.forEach(p=>{html+=`<div class="adm-post-item${editingId===p.id?' active':''}" onclick="loadPost(${JSON.stringify(p).replace(/"/g,'&quot;')})"><div class="pi-wrap"><div class="pi-body"><div class="adm-post-item-title">${p.pinned?'📌 ':''}${p.title}</div><div class="adm-post-meta"><span>${p.date}</span><span style="color:${p.published?'var(--green)':'var(--yellow)'};">${p.published?'pub':'draft'}</span></div></div><button class="pa-del" onclick="event.stopPropagation();deletePostById('${p.id}')">✕</button></div></div>`;});
   });
-  document.getElementById('sidebarPosts').innerHTML = html||`<div style="padding:14px;font-family:var(--font-mono);font-size:11px;color:var(--t4);">no posts yet — click + new post</div>`;
+  document.getElementById('sidebarPosts').innerHTML=html||`<div style="padding:14px;font-family:var(--font-mono);font-size:11px;color:var(--t4);">no posts yet</div>`;
 }
+function filterSidebar(q){renderSidebarPosts(q.toLowerCase());}
 
-function filterSidebar(q){ renderSidebarPosts(q.toLowerCase()); }
-
-// ── LOAD / NEW ────────────────────────────────────
 async function loadPost(meta){
   editingId=meta.id;
   document.getElementById('titleInput').value=meta.title;
@@ -360,411 +307,157 @@ async function loadPost(meta){
   document.getElementById('tagInput').value=(meta.tags||[]).filter(t=>t!==meta.category).join(', ');
   document.getElementById('pinnedCheck').checked=!!meta.pinned;
   document.getElementById('currentId').textContent=`id: ${meta.id}`;
-  currentThumb=meta.thumbnail||'';
-  updateThumbPreview();
-  try{ const p=await fetchPost(meta.file); editor.innerHTML=p.content||''; }
-  catch(e){ editor.innerHTML=''; }
-  updateStats();
-  renderSidebarPosts();
-  switchTab('write', document.querySelector('.ed-tab'));
+  currentThumb=meta.thumbnail||''; updateThumbPreview();
+  try{const p=await fetchPost(meta.file);editor.innerHTML=p.content||'';}catch(e){editor.innerHTML='';}
+  updateStats();renderSidebarPosts();switchTab('write',document.querySelector('.ed-tab'));
 }
 
-function newPost(){
-  editingId=null; currentThumb='';
-  document.getElementById('titleInput').value='';
-  document.getElementById('catSel').value='systems';
-  document.getElementById('moodSel').value='exhausted';
-  document.getElementById('tagInput').value='';
-  document.getElementById('pinnedCheck').checked=false;
-  document.getElementById('currentId').textContent='new post';
-  editor.innerHTML='';
-  updateThumbPreview();
-  updateStats();
-}
+function newPost(){editingId=null;currentThumb='';document.getElementById('titleInput').value='';document.getElementById('moodSel').value='exhausted';document.getElementById('tagInput').value='';document.getElementById('pinnedCheck').checked=false;document.getElementById('currentId').textContent='new post';editor.innerHTML='';updateThumbPreview();updateStats();}
 
-function updateThumbPreview(){
-  const el=document.getElementById('thumbPreview');
-  el.innerHTML=currentThumb?`<img src="${currentThumb}" alt=""/>`:' 🖼';
-}
-
-// ── SAVE / PUBLISH ────────────────────────────────
-async function saveDraft(){ await save(false); }
-async function publishPost(){ await save(true); }
+function updateThumbPreview(){const el=document.getElementById('thumbPreview');el.innerHTML=currentThumb?`<img src="${currentThumb}"/>`:'🖼';}
 
 async function save(publish){
-  const title=document.getElementById('titleInput').value.trim();
-  if(!title){alert('add a title first');return;}
-  const id=editingId||genId();
-  const cat=document.getElementById('catSel').value;
-  const mood=document.getElementById('moodSel').value;
+  const title=document.getElementById('titleInput').value.trim();if(!title){alert('add a title');return;}
+  const id=editingId||genId(),cat=document.getElementById('catSel').value,mood=document.getElementById('moodSel').value;
   const extraTags=document.getElementById('tagInput').value.split(',').map(t=>t.trim()).filter(Boolean);
-  const tags=[cat,...extraTags];
-  const content=editor.innerHTML;
-  const readTime=calcReadTime(content);
-  const pinned=document.getElementById('pinnedCheck').checked;
+  const tags=[cat,...extraTags];const content=editor.innerHTML;
+  const readTime=calcReadTime(content),pinned=document.getElementById('pinnedCheck').checked;
   const date=new Date().toISOString().split('T')[0];
-
   const postData={id,title,category:cat,tags,date,readTime,mood,pinned,published:publish,thumbnail:currentThumb,content};
-  const metaData={id,title,category:cat,tags,date,readTime,mood,pinned,published:publish,thumbnail:currentThumb,
-    excerpt:editor.innerText.slice(0,150).replace(/\n/g,' '),file:`posts/${id}.json`};
-
+  const metaData={id,title,category:cat,tags,date,readTime,mood,pinned,published:publish,thumbnail:currentThumb,excerpt:editor.innerText.slice(0,150).replace(/\n/g,' '),file:`posts/${id}.json`};
   setStatus('saving...','var(--t3)');
-
-  const ok1=await githubSave(`posts/${id}.json`,postData,`${publish?'publish':'draft'}: ${title}`);
-  if(!ok1){setStatus('save failed — check GitHub token','var(--pink)');return;}
-
+  const ok=await githubSave(`posts/${id}.json`,postData,`${publish?'publish':'draft'}: ${title}`);
+  if(!ok){setStatus('save failed — check token','var(--pink)');return;}
   const idx=allPosts.findIndex(p=>p.id===id);
-  if(idx>=0) allPosts[idx]=metaData; else allPosts.unshift(metaData);
+  if(idx>=0)allPosts[idx]=metaData;else allPosts.unshift(metaData);
   await githubSave('posts/index.json',allPosts,'update index');
-
-  editingId=id;
-  setStatus(publish?'published ✓':'draft saved ✓', publish?'var(--green)':'var(--yellow)');
+  editingId=id;setStatus(publish?'published ✓':'draft saved ✓',publish?'var(--green)':'var(--yellow)');
   document.getElementById('lastSaved').textContent='just now';
   document.getElementById('currentId').textContent=`id: ${id}`;
   renderSidebarPosts();
 }
+function saveDraft(){save(false);}function publishPost(){save(true);}
+function setStatus(t,c){document.getElementById('statusEl').textContent=t;document.getElementById('statusEl').style.color=c;}
 
-function setStatus(txt,col){
-  document.getElementById('statusEl').textContent=txt;
-  document.getElementById('statusEl').style.color=col;
-}
-
-// ── DELETE ────────────────────────────────────────
 async function deletePostById(id){
-  if(!confirm('delete this post permanently? this cannot be undone.')) return;
+  if(!confirm('delete permanently?'))return;
   allPosts=allPosts.filter(p=>p.id!==id);
-  await githubSave('posts/index.json',allPosts,'delete post '+id);
-  await githubDelete(`posts/${id}.json`,'delete post file '+id);
-  if(editingId===id) newPost();
-  renderSidebarPosts();
+  await githubSave('posts/index.json',allPosts,'delete '+id);
+  await githubDelete(`posts/${id}.json`);
+  if(editingId===id)newPost();renderSidebarPosts();
 }
 
-// ── THUMBNAIL UPLOAD ──────────────────────────────
-async function handleThumbUpload(e){
-  const file=e.target.files[0]; if(!file) return;
+async function handleThumb(e){
+  const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=async function(ev){
-    const base64=ev.target.result.split(',')[1];
-    const filename=`images/thumb_${Date.now()}_${file.name.replace(/[^a-z0-9.]/gi,'_')}`;
-    const ok=await githubSave(filename,{__raw:true,data:base64},'upload thumbnail');
-    currentThumb=ok?`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${filename}`:ev.target.result;
+  reader.onload=async ev=>{
+    const b64=ev.target.result.split(',')[1];
+    const fn=`images/thumb_${Date.now()}_${file.name.replace(/[^a-z0-9.]/gi,'_')}`;
+    const ok=await githubSave(fn,{__raw:true,data:b64},'upload thumb');
+    currentThumb=ok?`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${fn}`:ev.target.result;
     updateThumbPreview();
   };
-  reader.readAsDataURL(file);
-  e.target.value='';
+  reader.readAsDataURL(file);e.target.value='';
 }
 
-// ── MEDIA UPLOADS ─────────────────────────────────
-async function handleFileUpload(e, type){
-  const file=e.target.files[0]; if(!file) return;
+async function handleMedia(e,type){
+  const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=async function(ev){
-    const base64=ev.target.result.split(',')[1];
-    const ext=file.name.split('.').pop();
-    const filename=`images/${Date.now()}_${file.name.replace(/[^a-z0-9.]/gi,'_')}`;
+  reader.onload=async ev=>{
+    const b64=ev.target.result.split(',')[1];
+    const fn=`images/${Date.now()}_${file.name.replace(/[^a-z0-9.]/gi,'_')}`;
     setStatus('uploading...','var(--t3)');
-    const ok=await githubSave(filename,{__raw:true,data:base64},`upload ${type}`);
-    const url=ok?`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${filename}`:ev.target.result;
-    let el;
-    if(type==='vid'){
-      el=document.createElement('video');
-      el.src=url; el.controls=true; el.style.maxWidth='100%'; el.style.borderRadius='8px';
-    } else {
-      el=document.createElement('img');
-      el.src=url; el.style.maxWidth='100%'; el.style.borderRadius='8px';
-    }
-    insertNode(el);
-    setStatus(ok?'uploaded ✓':'using local preview','var(--green)');
+    const ok=await githubSave(fn,{__raw:true,data:b64},`upload ${type}`);
+    const url=ok?`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${fn}`:ev.target.result;
+    const wrap=document.createElement('div');wrap.className='resizable-media';wrap.style.width='100%';
+    if(type==='vid'){const v=document.createElement('video');v.src=url;v.controls=true;wrap.appendChild(v);}
+    else{const img=document.createElement('img');img.src=url;wrap.appendChild(img);}
+    insertNode(wrap);setStatus(ok?'uploaded ✓':'local preview','var(--green)');
   };
-  reader.readAsDataURL(file);
-  e.target.value='';
+  reader.readAsDataURL(file);e.target.value='';
 }
 
-function insertVideoMedia(){
-  // offer both: upload from device OR youtube link
-  const choice=confirm('upload from device? (OK = upload, Cancel = enter YouTube URL)');
-  if(choice){ document.getElementById('vidUploadInput').click(); }
-  else {
-    const url=prompt('YouTube URL:');
-    if(!url) return;
-    const vid=url.includes('v=')?url.split('v=')[1].split('&')[0]:url.split('/').pop();
-    const iframe=document.createElement('iframe');
-    iframe.src=`https://www.youtube.com/embed/${vid}`;
-    iframe.width='100%'; iframe.height='360'; iframe.frameBorder='0'; iframe.allowFullscreen=true;
-    iframe.style.borderRadius='8px';
-    insertNode(iframe);
-  }
+function insertVideo(){
+  const choice=confirm('upload from device? (OK=upload, Cancel=YouTube URL)');
+  if(choice){document.getElementById('vidUp').click();}
+  else{const url=prompt('YouTube URL:');if(!url)return;const vid=url.includes('v=')?url.split('v=')[1].split('&')[0]:url.split('/').pop();const wrap=document.createElement('div');wrap.className='resizable-media';wrap.style.width='100%';const iframe=document.createElement('iframe');iframe.src=`https://www.youtube.com/embed/${vid}`;iframe.width='100%';iframe.height='360';iframe.frameBorder='0';iframe.allowFullscreen=true;wrap.appendChild(iframe);insertNode(wrap);}
 }
 
-// ── LINK ─────────────────────────────────────────
 function insertLink(){
-  const sel=window.getSelection();
-  const selectedText=sel.toString();
-  const url=prompt('Enter URL:','https://');
-  if(!url||url==='https://') return;
+  const sel=window.getSelection();const selectedText=sel.toString();
+  const url=prompt('URL:','https://');if(!url||url==='https://')return;
   const text=selectedText||prompt('Link text:',url)||url;
-  const a=document.createElement('a');
-  a.href=url; a.textContent=text; a.target='_blank';
-  a.style.color='var(--purple)'; a.style.borderBottom='1px solid var(--purple-dark)';
-  if(selectedText&&sel.rangeCount){
-    const range=sel.getRangeAt(0);
-    range.deleteContents();
-    range.insertNode(a);
-  } else {
-    insertNode(a);
-  }
+  const a=document.createElement('a');a.href=url;a.textContent=text;a.target='_blank';
+  a.style.color='var(--purple)';a.style.borderBottom='1px solid var(--purple-dark)';
+  if(selectedText&&sel.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(a);}else insertNode(a);
 }
 
-// ── TOOLBAR ACTIONS ───────────────────────────────
-function fmt(cmd){ document.execCommand(cmd,false,null); editor.focus(); }
-
-function fmtMono(){
-  const sel=window.getSelection();
-  if(!sel.rangeCount) return;
-  const range=sel.getRangeAt(0);
-  const text=range.toString();
-  if(!text){ editor.focus(); return; }
-  const code=document.createElement('code');
-  code.textContent=text;
-  range.deleteContents(); range.insertNode(code);
-  editor.focus();
-}
-
-function insertHeading(level){
-  const sel=window.getSelection();
-  const text=sel.toString()||`heading ${level}`;
-  const h=document.createElement(`h${level}`);
-  h.textContent=text;
-  insertNode(h);
-}
+function fmt(cmd){document.execCommand(cmd,false,null);editor.focus();}
+function fmtMono(){const sel=window.getSelection();if(!sel.rangeCount)return;const r=sel.getRangeAt(0);const t=r.toString();if(!t){editor.focus();return;}const c=document.createElement('code');c.textContent=t;r.deleteContents();r.insertNode(c);editor.focus();}
+function insertH(level){const sel=window.getSelection();const text=sel.toString()||`heading ${level}`;const h=document.createElement(`h${level}`);h.textContent=text;insertNode(h);}
 
 function insertCode(){
-  const lang=prompt('language (python, java, javascript, bash, etc):','python')||'python';
+  const lang=prompt('language:','python')||'python';
   const pre=document.createElement('pre');
-  const code=document.createElement('code');
-  code.className=`language-${lang}`;
-  code.textContent='// your code here';
-  pre.appendChild(code);
-  insertNode(pre);
+  const code=document.createElement('code');code.className=`language-${lang}`;code.textContent='// your code here';
+  const badge=document.createElement('span');badge.className='code-lang-badge';badge.textContent=lang;
+  pre.appendChild(code);pre.appendChild(badge);insertNode(pre);
 }
+function insertQuote(){const bq=document.createElement('blockquote');bq.innerHTML='<p>quote here</p>';insertNode(bq);}
+function insertLatex(){const expr=prompt('LaTeX:','E = mc^2')||'E = mc^2';const span=document.createElement('span');span.className='katex-src katex-display';span.textContent=expr;insertNode(span);}
 
-function insertQuote(){
-  const bq=document.createElement('blockquote');
-  bq.innerHTML='<p>quote text here</p>';
-  insertNode(bq);
-}
-
-function insertLatex(){
-  const expr=prompt('LaTeX expression:','E = mc^2')||'E = mc^2';
-  const span=document.createElement('span');
-  span.className='katex-src katex-display';
-  span.textContent=expr;
-  insertNode(span);
-}
-
-// ── TABLE ─────────────────────────────────────────
 function insertTable(){
-  const rows=parseInt(prompt('rows:','3'))||3;
-  const cols=parseInt(prompt('cols:','3'))||3;
-  const tbl=document.createElement('table');
-  tbl.style.width='100%'; tbl.style.borderCollapse='collapse';
-  const thead=document.createElement('thead');
-  const hr=document.createElement('tr');
-  for(let c=0;c<cols;c++){
-    const th=document.createElement('th');
-    th.contentEditable='true'; th.textContent=`Col ${c+1}`;
-    hr.appendChild(th);
-  }
-  thead.appendChild(hr); tbl.appendChild(thead);
+  const rows=parseInt(prompt('rows:','3'))||3,cols=parseInt(prompt('cols:','3'))||3;
+  const tbl=document.createElement('table');tbl.style.width='100%';tbl.style.borderCollapse='collapse';
+  const thead=document.createElement('thead'),hr=document.createElement('tr');
+  for(let c=0;c<cols;c++){const th=document.createElement('th');th.contentEditable='true';th.textContent=`Col ${c+1}`;hr.appendChild(th);}
+  thead.appendChild(hr);tbl.appendChild(thead);
   const tbody=document.createElement('tbody');
-  for(let r=0;r<rows-1;r++){
-    const tr=document.createElement('tr');
-    for(let c=0;c<cols;c++){
-      const td=document.createElement('td');
-      td.contentEditable='true'; td.textContent='cell';
-      tr.appendChild(td);
-    }
-    tbody.appendChild(tr);
-  }
-  tbl.appendChild(tbody);
-  insertNode(tbl);
+  for(let r=0;r<rows-1;r++){const tr=document.createElement('tr');for(let c=0;c<cols;c++){const td=document.createElement('td');td.contentEditable='true';td.textContent='cell';tr.appendChild(td);}tbody.appendChild(tr);}
+  tbl.appendChild(tbody);insertNode(tbl);
 }
 
-function getActiveTable(){
-  const sel=window.getSelection();
-  if(!sel.rangeCount) return null;
-  let n=sel.getRangeAt(0).commonAncestorContainer;
-  while(n&&n!==editor){ if(n.tagName==='TABLE') return n; n=n.parentNode; }
-  return null;
-}
-function getActiveCell(){
-  const sel=window.getSelection();
-  if(!sel.rangeCount) return null;
-  let n=sel.getRangeAt(0).commonAncestorContainer;
-  while(n&&n!==editor){ if(n.tagName==='TD'||n.tagName==='TH') return n; n=n.parentNode; }
-  return null;
-}
-function detectTableCtx(){ document.getElementById('tblToolbar').classList.toggle('show',!!getActiveTable()); }
+function getAT(){const sel=window.getSelection();if(!sel.rangeCount)return null;let n=sel.getRangeAt(0).commonAncestorContainer;while(n&&n!==editor){if(n.tagName==='TABLE')return n;n=n.parentNode;}return null;}
+function getAC(){const sel=window.getSelection();if(!sel.rangeCount)return null;let n=sel.getRangeAt(0).commonAncestorContainer;while(n&&n!==editor){if(n.tagName==='TD'||n.tagName==='TH')return n;n=n.parentNode;}return null;}
+function detectTableCtx(){document.getElementById('tblToolbar').classList.toggle('show',!!getAT());}
+function tblRow(after){const c=getAC();if(!c)return;const row=c.closest('tr'),cols=row.cells.length,nr=document.createElement('tr');for(let i=0;i<cols;i++){const td=document.createElement('td');td.contentEditable='true';td.textContent='cell';nr.appendChild(td);}if(after)row.after(nr);else row.before(nr);}
+function tblCol(after){const c=getAC();if(!c)return;const t=getAT();if(!t)return;const ci=c.cellIndex;t.querySelectorAll('tr').forEach(row=>{const tag=row.cells[ci]?.tagName.toLowerCase()||'td';const nc=document.createElement(tag);nc.contentEditable='true';nc.textContent=tag==='th'?'Col':'cell';if(after)row.cells[ci].after(nc);else row.cells[ci].before(nc);});}
+function tblDelRow(){const c=getAC();if(!c)return;const t=getAT();if(t.querySelectorAll('tr').length>1)c.closest('tr').remove();}
+function tblDelCol(){const c=getAC();if(!c)return;const t=getAT();if(!t)return;const ci=c.cellIndex;if(t.querySelector('tr').cells.length<=1)return;t.querySelectorAll('tr').forEach(row=>{if(row.cells[ci])row.cells[ci].remove();});}
+function tblDelTable(){const t=getAT();if(t&&confirm('delete table?'))t.remove();}
 
-function tblAddRow(after){
-  const c=getActiveCell(); if(!c) return;
-  const row=c.closest('tr'); const cols=row.cells.length;
-  const nr=document.createElement('tr');
-  for(let i=0;i<cols;i++){ const td=document.createElement('td'); td.contentEditable='true'; td.textContent='cell'; nr.appendChild(td); }
-  if(after) row.after(nr); else row.before(nr);
-}
-function tblAddCol(after){
-  const c=getActiveCell(); if(!c) return;
-  const t=getActiveTable(); if(!t) return;
-  const ci=c.cellIndex;
-  t.querySelectorAll('tr').forEach(row=>{
-    const tag=row.cells[ci]?.tagName.toLowerCase()||'td';
-    const nc=document.createElement(tag);
-    nc.contentEditable='true'; nc.textContent=tag==='th'?'Col':'cell';
-    if(after) row.cells[ci].after(nc); else row.cells[ci].before(nc);
-  });
-}
-function tblDelRow(){
-  const c=getActiveCell(); if(!c) return;
-  const t=getActiveTable();
-  if(t.querySelectorAll('tr').length>1) c.closest('tr').remove();
-  else alert('last row — delete the table instead');
-}
-function tblDelCol(){
-  const c=getActiveCell(); if(!c) return;
-  const t=getActiveTable(); if(!t) return;
-  const ci=c.cellIndex;
-  const firstRow=t.querySelector('tr');
-  if(firstRow.cells.length<=1){alert('last column');return;}
-  t.querySelectorAll('tr').forEach(row=>{ if(row.cells[ci]) row.cells[ci].remove(); });
-}
-function tblMerge(){
-  alert('Select cells with mouse then use colspan/rowspan manually in HTML tab — browser limits WYSIWYG cell merging.');
-}
-function tblSplit(){
-  const c=getActiveCell(); if(!c) return;
-  const cs=parseInt(c.getAttribute('colspan')||1), rs=parseInt(c.getAttribute('rowspan')||1);
-  if(cs<=1&&rs<=1){alert('cell is not merged');return;}
-  c.removeAttribute('colspan'); c.removeAttribute('rowspan');
-  for(let i=1;i<cs;i++){ const td=document.createElement('td'); td.contentEditable='true'; td.textContent='cell'; c.after(td); }
-}
-function tblDelTable(){
-  const t=getActiveTable(); if(!t) return;
-  if(confirm('delete this table?')) t.remove();
-}
-
-// ── GHOST PICKER ──────────────────────────────────
+// ghost picker
 let savedRange=null;
-function saveSelection(){ const s=window.getSelection(); if(s.rangeCount) savedRange=s.getRangeAt(0).cloneRange(); }
-function restoreSelection(){ if(!savedRange) return; const s=window.getSelection(); s.removeAllRanges(); s.addRange(savedRange); }
-
-const ALL_GHOST_MOODS=[
-  {id:'exhausted',label:'exhausted'},{id:'uglycrying',label:'ugly crying'},
-  {id:'frustrated',label:'frustrated'},{id:'victory',label:'victory'},
-  {id:'smirking',label:'smirking'},{id:'skull',label:'skull'},
-  {id:'crash',label:'crash'},{id:'loop',label:'loop'},
-  {id:'glitch',label:'glitch'},{id:'null',label:'null'},
-  {id:'bug',label:'bug'},{id:'trace',label:'trace'},
-  {id:'oops',label:'oops'},{id:'lag',label:'lag'},
-  {id:'gremlin',label:'gremlin'},{id:'blink',label:'blink'},
-];
+function saveSelection(){const s=window.getSelection();if(s.rangeCount)savedRange=s.getRangeAt(0).cloneRange();}
+function restoreSelection(){if(!savedRange)return;const s=window.getSelection();s.removeAllRanges();s.addRange(savedRange);}
+const ALL_MOODS=[{id:'exhausted',label:'exhausted'},{id:'uglycrying',label:'ugly cry'},{id:'frustrated',label:'frustrated'},{id:'victory',label:'victory'},{id:'smirking',label:'smirking'},{id:'skull',label:'skull'},{id:'crash',label:'crash'},{id:'loop',label:'loop'},{id:'glitch',label:'glitch'},{id:'null',label:'null'},{id:'bug',label:'bug'},{id:'trace',label:'trace'},{id:'oops',label:'oops'},{id:'lag',label:'lag'},{id:'gremlin',label:'gremlin'},{id:'blink',label:'blink'}];
 
 function buildGhostPicker(){
-  // append to body so it floats above everything
-  const div=document.createElement('div');
-  div.className='ghost-picker'; div.id='ghostPicker';
-  div.innerHTML=ALL_GHOST_MOODS.map(m=>`
-    <div class="ghost-opt" onclick="insertGhost('${m.id}')">
-      ${getMoodGhost(m.id,40,46)}
-      <div class="ghost-opt-label">${m.label}</div>
-    </div>`).join('');
+  const div=document.createElement('div');div.className='ghost-picker';div.id='ghostPicker';
+  div.innerHTML=`<div class="ghost-picker-grid">${ALL_MOODS.map(m=>`<div class="ghost-opt" onclick="insertGhost('${m.id}')"><div>${getMoodGhost(m.id,36,42)}</div><div class="ghost-opt-label">${m.label}</div></div>`).join('')}</div>`;
   document.body.appendChild(div);
 }
-
 function toggleGhostPicker(e){
-  e.stopPropagation();
-  saveSelection();
-  const picker=document.getElementById('ghostPicker');
-  const showing=picker.classList.contains('show');
-  picker.classList.remove('show');
-  if(showing) return;
-  const btn=document.getElementById('ghostPickerBtn');
-  const rect=btn.getBoundingClientRect();
-  picker.style.top=(rect.bottom+6)+'px';
-  picker.style.left=Math.max(4,rect.left-80)+'px';
-  picker.classList.add('show');
+  e.stopPropagation();saveSelection();
+  const p=document.getElementById('ghostPicker'),showing=p.classList.contains('show');
+  p.classList.remove('show');if(showing)return;
+  const btn=document.getElementById('ghostPickerBtn'),rect=btn.getBoundingClientRect();
+  p.style.top=(rect.bottom+6)+'px';p.style.left=Math.max(4,rect.left-100)+'px';
+  p.classList.add('show');
 }
+function insertGhost(mood){document.getElementById('ghostPicker').classList.remove('show');restoreSelection();const span=document.createElement('span');span.className='ghost-inline';span.innerHTML=getMoodGhost(mood,36,42);insertNode(span);editor.focus();}
+document.addEventListener('click',e=>{if(!e.target.closest('#ghostPicker')&&!e.target.closest('#ghostPickerBtn'))document.getElementById('ghostPicker')?.classList.remove('show');});
 
-function insertGhost(mood){
-  document.getElementById('ghostPicker').classList.remove('show');
-  restoreSelection();
-  // insert just the ghost SVG, bigger, no label, no box
-  const span=document.createElement('span');
-  span.className='ghost-inline';
-  span.innerHTML=getMoodGhost(mood,36,42);
-  insertNode(span);
-  editor.focus();
-}
+function switchTab(tab,el){document.querySelectorAll('.ed-tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');editor.style.display=tab==='write'?'block':'none';document.getElementById('previewPane').classList.toggle('show',tab==='preview');document.getElementById('htmlPane').classList.toggle('show',tab==='html');if(tab==='preview'){document.getElementById('previewPane').innerHTML=editor.innerHTML;if(window.Prism)Prism.highlightAllUnder(document.getElementById('previewPane'));}if(tab==='html')document.getElementById('htmlPane').textContent=editor.innerHTML;}
 
-document.addEventListener('click',e=>{
-  if(!e.target.closest('#ghostPicker')&&!e.target.closest('#ghostPickerBtn'))
-    document.getElementById('ghostPicker')?.classList.remove('show');
-});
+function updateStats(){const txt=editor.innerText.trim();const w=txt?txt.split(/\s+/).length:0;document.getElementById('wc').textContent=w;document.getElementById('rt').textContent=`~${Math.max(1,Math.round(w/200))} min`;setStatus('unsaved','var(--yellow)');}
 
-// ── TABS ──────────────────────────────────────────
-function switchTab(tab,el){
-  document.querySelectorAll('.ed-tab').forEach(t=>t.classList.remove('active'));
-  if(el) el.classList.add('active');
-  editor.style.display=tab==='write'?'block':'none';
-  document.getElementById('previewPane').classList.toggle('show',tab==='preview');
-  document.getElementById('htmlPane').classList.toggle('show',tab==='html');
-  if(tab==='preview'){ document.getElementById('previewPane').innerHTML=editor.innerHTML; }
-  if(tab==='html'){ document.getElementById('htmlPane').textContent=editor.innerHTML; }
-}
+function insertNode(node){editor.focus();const sel=window.getSelection();if(sel.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(node);r.setStartAfter(node);r.collapse(true);sel.removeAllRanges();sel.addRange(r);}else editor.appendChild(node);updateStats();}
 
-// ── STATS ─────────────────────────────────────────
-function updateStats(){
-  const txt=editor.innerText.trim();
-  const words=txt?txt.split(/\s+/).length:0;
-  document.getElementById('wordCount').textContent=words;
-  document.getElementById('readTime').textContent=`~${Math.max(1,Math.round(words/200))} min`;
-  setStatus('unsaved','var(--yellow)');
-}
+async function crosspostTumblr(){const token=prompt('Tumblr OAuth token:');if(!token)return;const r=await fetch('https://api.tumblr.com/v2/blog/sociallynu.tumblr.com/posts',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})});alert(r.ok?'posted!':'failed');}
 
-// ── INSERT NODE ───────────────────────────────────
-function insertNode(node){
-  editor.focus();
-  const sel=window.getSelection();
-  if(sel.rangeCount){
-    const range=sel.getRangeAt(0);
-    range.deleteContents(); range.insertNode(node);
-    range.setStartAfter(node); range.collapse(true);
-    sel.removeAllRanges(); sel.addRange(range);
-  } else { editor.appendChild(node); }
-  updateStats();
-}
-
-function togglePin(){
-  const cb=document.getElementById('pinnedCheck');
-  cb.checked=!cb.checked;
-}
-
-// ── TUMBLR ────────────────────────────────────────
-async function crosspostTumblr(){
-  const token=prompt('Tumblr OAuth token:');
-  if(!token) return;
-  const r=await fetch('https://api.tumblr.com/v2/blog/sociallynu.tumblr.com/posts',{
-    method:'POST',
-    headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
-    body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})
-  });
-  alert(r.ok?'posted to tumblr!':'failed — check token and update YOUR_BLOG.tumblr.com in admin.html');
-}
-
-// auto-save every 2 mins
-setInterval(()=>{ if(editingId&&editor.innerText.trim()) saveDraft(); }, 120000);
-
-if(isAdmin()) adminInit();
+setInterval(()=>{if(editingId&&editor.innerText.trim())saveDraft();},120000);
+if(isAdmin())adminInit();
 </script>
 </body>
 </html>

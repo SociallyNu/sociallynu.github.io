@@ -1,0 +1,7 @@
+[
+  {"id":"systems","label":"systems","color":"#b8a8d4","bg":"#18142a","isCategory":true},
+  {"id":"dsa","label":"dsa","color":"#c9a0a0","bg":"#1e1218","isCategory":true},
+  {"id":"rant","label":"rant","color":"#c4a97d","bg":"#1e1608","isCategory":true},
+  {"id":"daily-log","label":"daily-log","color":"#a0b4a0","bg":"#101808","isCategory":true},
+  {"id":"milestone","label":"milestone","color":"#a0c4c4","bg":"#0a1818","isCategory":true}
+]
