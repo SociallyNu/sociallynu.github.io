@@ -89,6 +89,7 @@ body{overflow:hidden;}
 </div>
 
 <!-- ADMIN UI -->
+<input type="file" id="imgUploadInput" accept="image/*" style="display:none" onchange="handleImgUpload(event)"/>
 <div id="adminUI" style="display:none;">
 <div class="adm-topbar">
   <div class="adm-title">// SociallyNu<em>.</em> admin</div>
@@ -204,8 +205,10 @@ body{overflow:hidden;}
       <div class="tb-group">
         <span class="tb-label">insert</span>
         <button class="tb-btn" onclick="insertImg()">img</button>
+        <button class="tb-btn" onclick="insertImgUpload()">upload</button>
         <button class="tb-btn" onclick="insertGif()">gif</button>
         <button class="tb-btn" onclick="insertVideo()">vid</button>
+        <button class="tb-btn" onclick="insertLink()">🔗 link</button>
         <button class="tb-btn" onclick="toggleGhostPicker(event)" id="ghostPickerBtn">👻 nuon</button>
         <button class="tb-btn" onclick="insertEmoji()">☺ emoji</button>
       </div>
@@ -230,9 +233,6 @@ body{overflow:hidden;}
       <button class="tbl-btn danger" onclick="tblDeleteTable()">delete table</button>
     </div>
 
-    <!-- Ghost picker dropdown -->
-    <div class="ghost-picker" id="ghostPicker"></div>
-
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('write',this)">write</button>
       <button class="tab-btn" onclick="switchTab('preview',this)">preview</button>
@@ -240,7 +240,7 @@ body{overflow:hidden;}
     </div>
 
     <div class="editor-wrap">
-      <div class="editor post-content" id="editor" contenteditable="true"></div>
+      <div class="editor" id="editor" contenteditable="true" data-placeholder="start writing..."></div>
       <div class="preview-pane post-content" id="previewPane"></div>
       <div class="html-pane" id="htmlPane"></div>
     </div>
@@ -313,9 +313,13 @@ function renderSidebarPosts(filter=''){
     html+=`<div class="adm-group-label"><span class="tc-${cat}">#${cat}</span><span>${catPosts.length}</span></div>`;
     catPosts.forEach(p=>{
       html+=`<div class="adm-post-item${editingId===p.id?' active':''}" onclick="loadPost(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-        <div class="adm-post-item-title">${p.pinned?'📌 ':''}${p.title}</div>
-        <div class="adm-post-meta"><span>${p.date}</span><span style="color:${p.published?'var(--green)':'var(--yellow)'};">${p.published?'pub':'draft'}</span></div>
-        <div class="post-actions"><button class="post-action-btn pa-del" onclick="event.stopPropagation();deletePostById('${p.id}')">del</button></div>
+        <div style="display:flex;align-items:flex-start;gap:4px;">
+          <div style="flex:1;">
+            <div class="adm-post-item-title">${p.pinned?'📌 ':''}${p.title}</div>
+            <div class="adm-post-meta"><span>${p.date}</span><span style="color:${p.published?'var(--green)':'var(--yellow)'};">${p.published?'pub':'draft'}</span></div>
+          </div>
+          <button class="post-action-btn pa-del" onclick="event.stopPropagation();deletePostById('${p.id}')" title="delete post" style="flex-shrink:0;margin-top:2px;">✕</button>
+        </div>
       </div>`;
     });
   });
@@ -669,23 +673,35 @@ function buildGhostPicker(){
       <div class="ghost-opt-label">${m.label}</div>
     </div>`).join('');
 }
-function toggleGhostPicker(e){
+function toggleGhostPicker(e){ saveSelection();
   e.stopPropagation();
-  document.getElementById('ghostPicker').classList.toggle('show');
-  // position near button
+  const picker=document.getElementById('ghostPicker');
+  const isShowing=picker.classList.contains('show');
+  picker.classList.remove('show');
+  if(isShowing) return;
   const btn=document.getElementById('ghostPickerBtn');
   const rect=btn.getBoundingClientRect();
-  const picker=document.getElementById('ghostPicker');
-  picker.style.top=(rect.bottom+4)+'px';
-  picker.style.left=rect.left+'px';
+  picker.style.top=(rect.bottom+6)+'px';
+  picker.style.left=Math.max(4,rect.left-80)+'px';
+  picker.classList.add('show');
+}
+let savedRange=null;
+function saveSelection(){
+  const sel=window.getSelection();
+  if(sel.rangeCount) savedRange=sel.getRangeAt(0).cloneRange();
+}
+function restoreSelection(){
+  if(!savedRange) return;
+  const sel=window.getSelection();
+  sel.removeAllRanges(); sel.addRange(savedRange);
 }
 function insertGhost(mood){
-  // insert just the ghost SVG, larger, no label
+  document.getElementById('ghostPicker').classList.remove('show');
+  restoreSelection();
   const span=document.createElement('span');
   span.className='ghost-inline';
   span.innerHTML=getMoodGhost(mood,32,38);
   insertNode(span);
-  document.getElementById('ghostPicker').classList.remove('show');
   editor.focus();
 }
 
@@ -733,7 +749,7 @@ async function crosspostTumblr(){
   const token=prompt('Tumblr OAuth token:');
   if(!token) return;
   const title=document.getElementById('titleInput').value;
-  const r=await fetch('https://api.tumblr.com/v2/blog/YOUR_BLOG.tumblr.com/posts',{
+  const r=await fetch('https://api.tumblr.com/v2/blog/sociallynu.tumblr.com/posts',{
     method:'POST',
     headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
     body:JSON.stringify({type:'text',title,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})
@@ -752,5 +768,6 @@ setInterval(()=>{ if(editingId&&editor.innerText.trim()) saveDraft(); },120000);
 
 if(isAdmin()) adminInit();
 </script>
+<div class="ghost-picker" id="ghostPicker"></div>
 </body>
 </html>

@@ -229,7 +229,7 @@ function calcStreak(postMap, today){
 }
 
 // ── ADMIN AUTH ───────────────────────────────────────────────
-const ADMIN_PASS_HASH = 'YOUR_PASSWORD_HASH_HERE'; // replace after setup
+const ADMIN_PASS_HASH = 'changethis'; // replace after setup
 function isAdmin(){return localStorage.getItem('snu_admin')==='true';}
 function adminLogin(pass){
   // simple hash check - replace with bcrypt equiv or just hardcode hashed val
@@ -243,7 +243,7 @@ function adminLogout(){localStorage.removeItem('snu_admin');}
 
 // ── GITHUB API SAVE ──────────────────────────────────────────
 const GITHUB_TOKEN_KEY='snu_gh_token';
-const GITHUB_REPO='YOURUSERNAME/sociallynu.github.io'; // replace
+const GITHUB_REPO='SociallyNu/sociallynu.github.io'; // replace
 
 async function githubSave(path, content, message='update post'){
   const token=localStorage.getItem(GITHUB_TOKEN_KEY);
