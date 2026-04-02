@@ -6,171 +6,162 @@
 <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
+<canvas id="starCanvas"></canvas>
+<div class="page-wrap">
 <div id="nav-root"></div>
-<div class="page-body">
-  <aside class="sidebar" id="sidebar-root"></aside>
-  <main class="main">
-    <div style="display:grid;grid-template-columns:1fr 300px;gap:28px;">
-      <div>
-        <!-- ABOUT -->
-        <div class="divider" style="margin-top:0;">
-          <div style="width:4px;height:4px;border-radius:50%;background:var(--purple);flex-shrink:0;"></div>
-          <span class="div-label" style="color:var(--purple);">about</span>
-          <div class="div-line"></div>
-        </div>
+<main class="main" style="max-width:1000px;margin:0 auto;">
 
-        <div style="display:flex;gap:14px;align-items:flex-start;margin-bottom:18px;">
-          <div class="pfp" style="flex-shrink:0;">🐱</div>
-          <div>
-            <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;margin-bottom:4px;">∵ sociallyny</div>
-            <div style="font-family:var(--font-serif);font-style:italic;font-size:17px;color:#ede8ff;line-height:1.25;margin-bottom:3px;">learning arc or villain origin story.</div>
-            <div style="font-family:var(--font-mono);font-size:7px;letter-spacing:1px;color:#3a4270;text-transform:uppercase;">// accountability blog · vol. 1</div>
-          </div>
-        </div>
+  <div class="divider" style="margin-top:0;">
+    <div style="width:4px;height:4px;border-radius:50%;background:var(--purple);flex-shrink:0;"></div>
+    <span class="div-label" style="color:var(--purple);">about</span>
+    <div class="div-line"></div>
+  </div>
 
-        <div class="about-prose">bro y tf is locking in so tough… like i got a MILLION goals and i still can't start working towards ANY of them. executive dysfunction?? maybe. lethargy?? also maybe. probably both. honestly idk bro 🤷</div>
+  <div class="about-layout">
+    <div id="aboutLeft">
 
-        <div class="about-prose">so yeah this is <strong>sociallyNu</strong> — my anonymous accountability blog. gonna make myself suffer with external accountability cuz clearly internal isn't doing jack 💥 if i flop, it's archived. if i succeed, also archived. welcome to my public therapy sesh.</div>
-
-        <div class="about-prose"><strong>Nu = neutrino</strong> — barely interacts, just floats through things… kinda like me except now i'm leaving traces <span style="display:inline-flex;align-items:center;gap:2px;vertical-align:middle;" id="inlineNuon1"></span></div>
-
-        <div class="about-prose">speaking of which… meet my emotional support ghostlings: <strong>Nuon says hi!</strong> they're floating through the <a href="/nuonverse.html" style="color:var(--purple);border-bottom:1px solid #2a1f4a;">Nuonverse</a> 🫣</div>
-
-        <div class="about-prose">i'm in computer science and you'd think my basics are solid… they're not. absolute dumpster fire. we're basically rebuilding everything from scratch lol 🔥</div>
-
-        <div class="about-prose">so this blog = me:</div>
-        <div style="margin:0 0 14px;">
-          <div class="belief-item"><span class="belief-marker">∵</span><span class="belief-text">posting what i learn 📝</span></div>
-          <div class="belief-item"><span class="belief-marker">∵</span><span class="belief-text">explaining concepts in the simplest way possible 💡</span></div>
-          <div class="belief-item"><span class="belief-marker">∵</span><span class="belief-text">tracking goals so i can't escape them ⛓️</span></div>
-          <div class="belief-item"><span class="belief-marker">∵</span><span class="belief-text">ranting / losing my mind / crash outs</span></div>
-        </div>
-
-        <div class="face-box">
-          <div class="face-label">face reveal — canon event</div>
-          <div class="face-item">might happen</div>
-          <div class="face-item">probably when i unlock social skills irl 😬</div>
-          <div class="face-item">until then, strictly ghost-mode <span id="inlineNuon2" style="vertical-align:middle;"></span></div>
-        </div>
-
-        <div class="about-prose">will i be consistent? idk 😅 will i try? also idk 🤔 but it's happening. somehow.</div>
-        <div class="sign-off">this was a bad idea (continuing) 💀✨</div>
-
-        <!-- NOW -->
-        <div class="divider" style="margin-top:28px;">
-          <div style="width:4px;height:4px;border-radius:50%;background:var(--green);flex-shrink:0;"></div>
-          <span class="div-label" style="color:var(--green);">now</span>
-          <div class="div-line"></div>
-        </div>
-
-        <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;color:var(--text-muted);margin-bottom:16px;">last updated: <span style="color:var(--green);" id="nowUpdatedLabel">april 2026</span> · <a href="/admin.html?editabout=1" id="editNowLink" style="display:none;color:var(--purple);">edit ✏</a></div>
-
-        <div style="margin-bottom:16px;">
-          <div class="sb-label">currently grinding</div>
-          
-          <div class="now-item"><div class="now-dot" style="background:var(--blue);"></div><div>DSA grind — NeetCode roadmap, 1.5 hrs/day, some things are clicking</div></div>
-          <div class="now-item"><div class="now-dot" style="background:var(--pink);"></div><div>building this blog — nuon supervised the entire process</div></div>
-        </div>
-
+      <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;">
+        <div class="pfp" style="flex-shrink:0;width:64px;height:64px;font-size:30px;">🐱</div>
         <div>
-          <div class="sb-label">reading / watching</div>
-          <div class="now-item"><div class="now-dot" style="background:var(--blue);"></div><div><strong style="color:#9890c0;font-weight:normal;">reading:</strong> DDIA — designing data-intensive applications. slowly but surely.</div></div>
-          <div class="now-item"><div class="now-dot" style="background:var(--yellow);"></div><div><strong style="color:#9890c0;font-weight:normal;">watching:</strong> whatever's on in the background while debugging</div></div>
+          <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;margin-bottom:4px;font-weight:700;">∵ sociallyny</div>
+          <div style="font-family:var(--font-serif);font-style:italic;font-size:18px;color:var(--t1);line-height:1.25;margin-bottom:3px;">learning arc or villain origin story.</div>
+          <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--t4);text-transform:uppercase;">// accountability blog · vol. 1</div>
         </div>
       </div>
 
-      <!-- RIGHT COL -->
-      <div style="display:flex;flex-direction:column;gap:16px;">
-        <div class="stats-wrap">
-          <div class="sb-label">say hi to nuon</div>
-          <div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;">
-            <div class="float" id="aboutNuon"></div>
-            <div class="nuon-name">nuon</div>
-            <div class="nuon-role">leader of the nuonverse<br>emotional support ghostling<br>witnesses everything. judges nothing.</div>
-          </div>
+      <div id="aboutProse">
+        <p class="about-prose">bro y tf is locking in so tough… like i got a MILLION goals and i still can't start working towards ANY of them. executive dysfunction?? maybe. lethargy?? also maybe. probably both. honestly idk bro 🤷</p>
+        <p class="about-prose">so yeah this is <strong>sociallyNu</strong> — my anonymous accountability blog. gonna make myself suffer with external accountability cuz clearly internal isn't doing jack 💥 if i flop, it's archived. if i succeed, also archived. welcome to my public therapy sesh.</p>
+        <p class="about-prose"><strong>Nu = neutrino</strong> — barely interacts, just floats through things… kinda like me except now i'm leaving traces <span id="inlineGhost" style="vertical-align:middle;display:inline-flex;"></span></p>
+        <p class="about-prose">speaking of which… meet my emotional support ghostlings: <strong>Nuon says hi!</strong> they're floating through the <a href="/nuonverse.html">Nuonverse</a> 🫣</p>
+        <p class="about-prose">i'm in computer science and you'd think my basics are solid… they're not. absolute dumpster fire. we're basically rebuilding everything from scratch lol 🔥</p>
+        <p class="about-prose">so this blog = me:</p>
+      </div>
+
+      <div style="margin:0 0 16px;">
+        <div class="belief-item"><span class="belief-marker">∵</span><span class="belief-text">posting what i learn 📝</span></div>
+        <div class="belief-item"><span class="belief-marker">∵</span><span class="belief-text">explaining concepts in the simplest way possible 💡</span></div>
+        <div class="belief-item"><span class="belief-marker">∵</span><span class="belief-text">tracking goals so i can't escape them ⛓️</span></div>
+        <div class="belief-item"><span class="belief-marker">∵</span><span class="belief-text">ranting / losing my mind / crash outs</span></div>
+      </div>
+
+      <div class="face-box">
+        <div class="face-label">face reveal — canon event</div>
+        <div class="face-item">might happen</div>
+        <div class="face-item">probably when i unlock social skills irl 😬</div>
+        <div class="face-item">until then, strictly ghost-mode <span id="skullGhost" style="vertical-align:middle;display:inline-flex;"></span></div>
+      </div>
+
+      <p class="about-prose">will i be consistent? idk 😅 will i try? also idk 🤔 but it's happening. somehow.</p>
+      <div class="sign-off">this was a bad idea (continuing) 💀✨</div>
+
+      <!-- NOW -->
+      <div class="divider" style="margin-top:32px;">
+        <div style="width:4px;height:4px;border-radius:50%;background:var(--green);flex-shrink:0;"></div>
+        <span class="div-label" style="color:var(--green);">now</span>
+        <div class="div-line"></div>
+      </div>
+
+      <div style="font-family:var(--font-mono);font-size:11px;color:var(--t4);margin-bottom:16px;">
+        last updated: <span style="color:var(--green);" id="nowUpdatedLabel">—</span>
+        <span id="editNowLink" style="display:none;"> · <a href="/admin-about.html" style="color:var(--purple);">edit ✏</a></span>
+      </div>
+
+      <div class="now-cards" id="nowCards">
+        <div class="now-card" id="grindCard">
+          <div class="now-card-label">currently grinding</div>
+          <div id="grindingItems"><div style="font-family:var(--font-mono);font-size:10px;color:var(--t4);">loading...</div></div>
         </div>
-
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px;">
-          <div class="sb-label">today's mood</div>
-          <div class="mood-ghosts" id="aboutMoodGhosts"></div>
-          <div class="mood-names" id="aboutMoodNames"></div>
+        <div class="now-card" id="readCard">
+          <div class="now-card-label">reading / watching</div>
+          <div id="readingItems"><div style="font-family:var(--font-mono);font-size:10px;color:var(--t4);">loading...</div></div>
         </div>
+      </div>
 
-        <div id="streakRoot"></div>
+    </div>
 
-        <div class="stats-wrap" id="statsRoot"></div>
+    <!-- RIGHT PANEL -->
+    <div class="about-right" id="aboutRight">
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:18px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div class="sb-label" style="width:100%;text-align:left;">say hi to nuon</div>
+        <div class="float" id="aboutNuon"></div>
+        <div class="nuon-name">nuon</div>
+        <div class="nuon-role">leader of the nuonverse<br>emotional support ghostling<br>witnesses everything. judges nothing.</div>
+      </div>
+
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:14px;">
+        <div class="sb-label">today's mood</div>
+        <div class="mood-ghosts" id="aboutMoodGhosts" style="margin-top:8px;"></div>
+      </div>
+
+      <div id="streakRoot"></div>
+
+      <div class="stats-wrap" id="statsRoot">
+        <div class="sb-label">by the numbers</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--t4);">loading...</div>
       </div>
     </div>
-  </main>
+  </div>
+
+</main>
 </div>
 <script src="/assets/js/main.js"></script>
 <script>
-const TODAY_MOODS=['exhausted','uglycrying'];
+const moodNames = {
+  exhausted:'Exhausted Nuon', uglycrying:'Ugly Cry Nuon', frustrated:'Frustrated Nuon',
+  victory:'Victory Nuon', smirking:'Smirking Nuon', skull:'Skull Nuon'
+};
 
 async function init(){
-  document.getElementById('nav-root').innerHTML=renderNav('about');
-  const posts=await fetchPosts();
-  document.getElementById('sidebar-root').innerHTML=await renderSidebar(posts,TODAY_MOODS);
+  document.getElementById('nav-root').innerHTML = renderNav('about');
+  const [posts, about] = await Promise.all([fetchPosts(), fetchAbout()]);
 
-  // inline nuons
-  document.getElementById('inlineNuon1').innerHTML=GHOST.base(16,18);
-  document.getElementById('inlineNuon2').innerHTML=GHOST.skull(14,16);
+  // inline ghosts
+  document.getElementById('inlineGhost').innerHTML = G.base(18,22);
+  document.getElementById('skullGhost').innerHTML = G.skull(16,19);
 
   // about nuon
-  document.getElementById('aboutNuon').innerHTML=GHOST.base(52,60);
+  document.getElementById('aboutNuon').innerHTML = G.base(60,68);
 
   // mood
-  document.getElementById('aboutMoodGhosts').innerHTML=TODAY_MOODS.map(m=>getMoodGhost(m,30,34)).join('');
-  document.getElementById('aboutMoodNames').innerHTML=TODAY_MOODS.map(m=>`<div class="mood-name">${m}</div>`).join('');
+  const moods = about.moods||['exhausted','uglycrying'];
+  document.getElementById('aboutMoodGhosts').innerHTML = moods.map(m=>`
+    <div class="mood-ghost-item">
+      <div class="mood-tip">${moodNames[m]||m}</div>
+      ${getMoodGhost(m,44,52)}
+    </div>`).join('');
 
   // streak
-  document.getElementById('streakRoot').innerHTML=renderStreakCalendar(posts);
+  document.getElementById('streakRoot').innerHTML = renderStreakCalendar(posts);
 
   // stats
   const cats=['systems','dsa','rant','daily-log','milestone'];
+  const catColors={systems:'var(--cat-systems)',dsa:'var(--cat-dsa)',rant:'var(--cat-rant)','daily-log':'var(--cat-log)',milestone:'var(--cat-milestone)'};
+  const pub = posts.filter(p=>p.published);
   const counts={};
-  const pub=posts.filter(p=>p.published);
   pub.forEach(p=>{counts[p.category]=(counts[p.category]||0)+1;});
-  const catColors={systems:'var(--purple)',dsa:'var(--blue)',rant:'var(--pink)','daily-log':'var(--yellow)',milestone:'var(--green)'};
   document.getElementById('statsRoot').innerHTML=`
     <div class="sb-label">by the numbers</div>
-    <div class="stat-row"><span class="stat-label">total posts</span><span class="stat-val" style="color:#d4c5fa;">${pub.length}</span></div>
+    <div class="stat-row"><span class="stat-label">total posts</span><span class="stat-val" style="color:var(--t1);">${pub.length}</span></div>
     ${cats.map(c=>`<div class="stat-row"><span class="stat-label">${c}</span><span class="stat-val" style="color:${catColors[c]};">${String(counts[c]||0).padStart(2,'0')}</span></div>`).join('')}
-    <div class="stat-row"><span class="stat-label">started</span><span class="stat-val" style="color:var(--text-muted);">jan 2026</span></div>`;
+    <div class="stat-row"><span class="stat-label">started</span><span class="stat-val" style="color:var(--t3);">jan 2026</span></div>`;
 
-  // admin edit link
+  // now section
+  document.getElementById('nowUpdatedLabel').textContent = about.updated||'recently';
+  if(about.grinding?.length){
+    document.getElementById('grindingItems').innerHTML = about.grinding.map(g=>`
+      <div class="now-item"><div class="now-dot" style="background:var(--purple);"></div><div>${g}</div></div>`).join('');
+  }
+  if(about.reading?.length){
+    document.getElementById('readingItems').innerHTML = about.reading.map(g=>`
+      <div class="now-item"><div class="now-dot" style="background:var(--blue);"></div><div>${g}</div></div>`).join('');
+  }
+
   if(isAdmin()) document.getElementById('editNowLink').style.display='inline';
+
+  initStars();
 }
 init();
 </script>
 </body>
 </html>
-<script>
-// patch: load about.json and render dynamic sections
-(async function(){
-  try{
-    const r=await fetch('/posts/about.json');
-    if(!r.ok) return;
-    const d=await r.json();
-    // prose
-    const proseEl=document.querySelector('.about-prose:nth-child(2)');
-    // moods override
-    const moods=d.moods||['exhausted','uglycrying'];
-    document.getElementById('aboutMoodGhosts').innerHTML=moods.map(m=>getMoodGhost(m,30,34)).join('');
-    document.getElementById('aboutMoodNames').innerHTML=moods.map(m=>`<div class="mood-name">${m}</div>`).join('');
-    // grinding
-    const grindEl=document.getElementById('grindingItems');
-    if(grindEl&&d.grinding) grindEl.innerHTML=d.grinding.map(g=>`
-      <div id="grindingItems"></div><div style="display:none"><div class="now-item"><div class="now-dot" style="background:var(--purple);"></div><div>${g}</div></div>`).join('');
-    // reading
-    const readEl=document.getElementById('readingItems');
-    if(readEl&&d.reading) readEl.innerHTML=d.reading.map(g=>`
-      <div class="now-item"><div class="now-dot" style="background:var(--blue);"></div><div>${g}</div></div>`).join('');
-    // updated
-    if(d.updated){
-      const upEl=document.getElementById('nowUpdatedLabel');
-      if(upEl) upEl.textContent=d.updated;
-    }
-  }catch(e){}
-})();
-</script>

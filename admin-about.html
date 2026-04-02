@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edit About — SociallyNu. Admin</title>
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<div class="page-wrap">
+<nav class="nav">
+  <a href="/index.html" class="nav-logo">SociallyNu<em>.</em></a>
+  <div class="nav-links">
+    <a href="/admin.html">← back to posts</a>
+    <a href="/about.html" target="_blank">preview about ↗</a>
+  </div>
+</nav>
+
+<div class="about-admin-wrap">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+    <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;font-weight:700;">// edit about + now</div>
+    <div style="flex:1;height:1px;background:var(--border);"></div>
+    <button class="af-save-btn" onclick="saveAll()">save all →</button>
+  </div>
+
+  <div id="saveStatus" style="display:none;font-family:var(--font-mono);font-size:11px;text-align:center;padding:8px;border-radius:6px;margin-bottom:16px;"></div>
+
+  <div class="af-section">
+    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;font-weight:700;margin-bottom:14px;">about prose</div>
+    <label class="af-label" for="aboutProse">main text (HTML supported)</label>
+    <textarea class="af-textarea" id="aboutProse" rows="8" placeholder="write about yourself here..."></textarea>
+    <div class="af-hint">supports &lt;strong&gt;, &lt;a href=&quot;&quot;&gt;, &lt;em&gt; etc. newlines become new paragraphs.</div>
+  </div>
+
+  <div class="af-section">
+    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;font-weight:700;margin-bottom:14px;">now — currently grinding</div>
+    <label class="af-label" for="nowGrinding">one item per line</label>
+    <textarea class="af-textarea" id="nowGrinding" rows="5" placeholder="distributed systems — deep in consensus protocols&#10;DSA grind — NeetCode roadmap&#10;building stuff"></textarea>
+  </div>
+
+  <div class="af-section">
+    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;font-weight:700;margin-bottom:14px;">now — reading / watching</div>
+    <label class="af-label" for="nowReading">one item per line</label>
+    <textarea class="af-textarea" id="nowReading" rows="4" placeholder="reading: DDIA — designing data-intensive applications&#10;watching: whatever's on while debugging"></textarea>
+  </div>
+
+  <div class="af-section">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div>
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;font-weight:700;margin-bottom:10px;">today's mood</div>
+        <label class="af-label" for="todayMood">comma separated mood names</label>
+        <input class="af-input" id="todayMood" placeholder="exhausted, uglycrying"/>
+        <div class="af-hint" style="margin-top:6px;">
+          available: exhausted, uglycrying, frustrated, victory, smirking, skull,
+          crash, loop, glitch, null, bug, trace, oops, lag, gremlin, blink
+          <br><br>
+          ⚠️ this updates ALL sidebars and the about page simultaneously — it reads from about.json everywhere.
+        </div>
+      </div>
+      <div>
+        <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;font-weight:700;margin-bottom:10px;">last updated</div>
+        <label class="af-label" for="nowUpdated">displayed on about page</label>
+        <input class="af-input" id="nowUpdated" placeholder="april 2026"/>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;justify-content:center;padding:8px 0;">
+    <button class="af-save-btn" onclick="saveAll()" style="min-width:200px;">save everything →</button>
+  </div>
+</div>
+</div>
+
+<script src="/assets/js/main.js"></script>
+<script>
+// redirect to login if not admin
+if(!isAdmin()) location='/admin.html';
+
+async function loadData(){
+  const d = await fetchAbout();
+  document.getElementById('aboutProse').value = d.prose||'';
+  document.getElementById('nowGrinding').value = (d.grinding||[]).join('\n');
+  document.getElementById('nowReading').value = (d.reading||[]).join('\n');
+  document.getElementById('todayMood').value = (d.moods||['exhausted','uglycrying']).join(', ');
+  document.getElementById('nowUpdated').value = d.updated||'';
+}
+
+async function saveAll(){
+  const st = document.getElementById('saveStatus');
+  st.style.display='block';
+  st.style.background='var(--bg2)';
+  st.style.color='var(--t3)';
+  st.textContent='saving...';
+
+  const data = {
+    prose: document.getElementById('aboutProse').value,
+    grinding: document.getElementById('nowGrinding').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    reading: document.getElementById('nowReading').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    moods: document.getElementById('todayMood').value.split(',').map(s=>s.trim()).filter(Boolean),
+    updated: document.getElementById('nowUpdated').value.trim()
+  };
+
+  const ok = await githubSave('posts/about.json', data, 'update about/now');
+  if(ok){
+    st.style.color='var(--green)';
+    st.style.background='var(--cat-milestone-bg)';
+    st.textContent='✓ saved! changes will be live in ~1 min after GitHub Pages rebuilds.';
+  } else {
+    st.style.color='var(--pink)';
+    st.style.background='var(--cat-dsa-bg)';
+    st.textContent='✗ save failed. check your GitHub token — go back to admin.html and re-enter it.';
+  }
+  setTimeout(()=>st.style.display='none', 5000);
+}
+
+loadData();
+</script>
+</body>
+</html>

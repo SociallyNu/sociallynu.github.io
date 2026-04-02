@@ -4,212 +4,103 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Nuonverse — SociallyNu.</title>
 <link rel="stylesheet" href="/assets/css/style.css">
-<style>
-.nv-hero{padding:24px 28px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;}
-.nv-hero-title{font-family:var(--font-serif);font-style:italic;font-size:22px;color:#ede8ff;line-height:1.2;margin-bottom:6px;}
-.nv-hero-eyebrow{font-family:var(--font-mono);font-size:7px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;margin-bottom:6px;}
-.nv-hero-desc{font-family:var(--font-body);font-size:11px;color:var(--text-muted);line-height:1.7;max-width:420px;}
-.nv-hero-ghosts{display:flex;gap:8px;align-items:flex-end;}
-/* leader card - centered above grid */
-.nv-leader-wrap{display:flex;justify-content:center;margin-bottom:20px;}
-.nv-leader-card{background:#0d0a1e;border:1px solid #2a1f4a;border-radius:12px;padding:18px 24px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;transition:transform 0.15s;min-width:160px;}
-.nv-leader-card:hover{transform:translateY(-4px);}
-.nv-leader-card:hover .nv-ghost-svg{animation:wobble 0.4s ease;}
-.nv-leader-badge{font-family:var(--font-mono);font-size:6px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;background:#1a1040;border:1px solid #2a1f4a;border-radius:3px;padding:2px 6px;margin-bottom:2px;}
-</style>
 </head>
 <body>
+<canvas id="starCanvas"></canvas>
+<div class="page-wrap">
 <div id="nav-root"></div>
+<div class="nv-page-body">
+  <main class="nv-main">
 
-<div class="main" style="max-width:900px;margin:0 auto;">
-  <div class="nv-hero">
+    <div class="divider" style="margin-top:0;">
+      <div style="width:4px;height:4px;border-radius:50%;background:var(--purple);flex-shrink:0;"></div>
+      <span class="div-label" style="color:var(--purple);">∵ the nuonverse</span>
+      <div class="div-line"></div>
+    </div>
+
+    <div style="font-family:var(--font-serif);font-style:italic;font-size:22px;color:var(--t1);margin-bottom:24px;">meet the ghost council.</div>
+
+    <!-- LEADER: NUON centered -->
+    <div class="nv-leader-wrap">
+      <div class="nv-leader-card">
+        <div class="nv-leader-badge">leader</div>
+        <div class="float" id="nuonLeader"></div>
+        <div class="nv-card-name">nuon</div>
+        <div class="nv-card-mood">soft floaty · base</div>
+      </div>
+    </div>
+
+    <!-- ALL GHOSTS IN ONE GRID -->
+    <div class="nv-grid" id="nvGrid"></div>
+
+  </main>
+
+  <!-- SIDEBAR -->
+  <aside class="nv-sidebar" id="nvSidebarEl">
+    <div class="nuon-wrap" style="margin-bottom:8px;">
+      <div class="float" id="nvSideNuon"></div>
+      <div class="nuon-name">nuon</div>
+      <div class="nuon-role">leader of the nuonverse<br>emotional support ghostling</div>
+    </div>
+    <div class="sb-sep"></div>
+    <div id="nvTagsRoot"></div>
+    <div class="sb-sep"></div>
     <div>
-      <div class="nv-hero-eyebrow">∵ the nuonverse</div>
-      <div class="nv-hero-title">meet the ghost council.</div>
-      <div class="nv-hero-desc">every emotion has a ghostling. they float through this blog, appearing when the moment calls. hover to wake them up.</div>
+      <div class="sb-label">ghost count</div>
+      <div style="font-family:var(--font-mono);font-size:24px;color:var(--purple);font-weight:700;text-align:center;padding:8px 0;" id="ghostCount">0</div>
+      <div style="font-family:var(--font-mono);font-size:9px;color:var(--t4);text-align:center;letter-spacing:1px;text-transform:uppercase;">floating through<br>the nuonverse</div>
     </div>
-    <div class="nv-hero-ghosts" id="heroGhosts"></div>
-  </div>
-
-  <!-- LEADER: NUON centered -->
-  <div class="nv-leader-wrap">
-    <div class="nv-leader-card">
-      <div class="nv-leader-badge">leader</div>
-      <div class="float" id="nuonLeader"></div>
-      <div class="nv-card-name">nuon</div>
-      <div class="nv-card-mood">soft floaty · base</div>
-    </div>
-  </div>
-
-  <!-- CORE COUNCIL -->
-  <div class="divider"><span class="div-label">core council</span><div class="div-line"></div></div>
-  <div class="nv-grid" id="coreGrid" style="margin-bottom:24px;"></div>
-
-  <!-- BONUS -->
-  <div class="nv-bonus-divider">
-    <div class="nv-bonus-line"></div>
-    <div class="nv-bonus-text">bonus council · spotted occasionally</div>
-    <div class="nv-bonus-line"></div>
-  </div>
-  <div class="nv-grid" id="bonusGrid"></div>
+  </aside>
+</div>
 </div>
 
 <script src="/assets/js/main.js"></script>
 <script>
-const CORE_COUNCIL=[
-  {
-    id:'crash',
-    name:'CrashNuon',
-    mood:"the \"i can't even\" ghost",
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg">
-      <ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff"/>
-      <path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff"/>
-      <text x="14" y="24" font-size="10" fill="#2a1f4a" font-family="monospace">@</text>
-      <text x="42" y="24" font-size="10" fill="#2a1f4a" font-family="monospace">@</text>
-      <path d="M28 42 Q36 38 44 42" stroke="#2a1f4a" stroke-width="2" fill="none"/>
-      <ellipse cx="27" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <ellipse cx="45" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <line x1="18" y1="8" x2="24" y2="18" stroke="#fcd34d" stroke-width="2"/>
-      <line x1="54" y1="8" x2="48" y2="18" stroke="#fcd34d" stroke-width="2"/>
-    </svg>`
-  },
-  {
-    id:'cry',
-    name:'CryNuon',
-    mood:'sad but relatable',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg">
-      <ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff"/>
-      <path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff"/>
-      <text x="26" y="30" font-size="11" fill="#2a1f4a" font-family="monospace">×</text>
-      <text x="38" y="30" font-size="11" fill="#2a1f4a" font-family="monospace">×</text>
-      <path d="M30 43 Q36 39 42 43" stroke="#2a1f4a" stroke-width="2" fill="none"/>
-      <ellipse cx="27" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <ellipse cx="45" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <ellipse cx="32" cy="46" rx="3" ry="5" fill="#a0c4f8" opacity="0.7"/>
-      <ellipse cx="40" cy="48" rx="2.5" ry="4" fill="#a0c4f8" opacity="0.5"/>
-    </svg>`
-  },
-  {
-    id:'loop',
-    name:'LoopNuon',
-    mood:'obsessive · grind mode',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg">
-      <ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff"/>
-      <path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff"/>
-      <text x="26" y="32" font-size="11" fill="#2a1f4a" font-family="monospace">-</text>
-      <text x="38" y="32" font-size="11" fill="#2a1f4a" font-family="monospace">-</text>
-      <path d="M29 42 Q36 47 43 42" stroke="#2a1f4a" stroke-width="2" fill="none"/>
-      <ellipse cx="27" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <ellipse cx="45" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <rect x="26" y="8" width="20" height="13" rx="2" fill="#4a3080" opacity="0.8"/>
-      <text x="29" y="18" font-size="7" fill="#c4b0ff" font-family="monospace">&gt;_</text>
-    </svg>`
-  },
-  {
-    id:'glitch',
-    name:'GlitchNuon',
-    mood:'pure chaos',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg">
-      <ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff"/>
-      <path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff"/>
-      <text x="23" y="30" font-size="14" fill="#2a1f4a" font-family="monospace">%</text>
-      <text x="38" y="30" font-size="14" fill="#2a1f4a" font-family="monospace">$</text>
-      <path d="M27 44 Q36 50 45 44" stroke="#2a1f4a" stroke-width="2" fill="none"/>
-      <ellipse cx="25" cy="37" rx="6" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <ellipse cx="47" cy="37" rx="6" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <line x1="14" y1="6" x2="22" y2="16" stroke="#f472b6" stroke-width="1.5"/>
-      <line x1="58" y1="6" x2="50" y2="16" stroke="#fcd34d" stroke-width="1.5"/>
-      <line x1="8" y1="16" x2="18" y2="20" stroke="#60a5fa" stroke-width="1"/>
-    </svg>`
-  },
-  {
-    id:'null',
-    name:'NullNuon',
-    mood:'apathetic · meh',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg">
-      <ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff"/>
-      <path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff"/>
-      <line x1="24" y1="28" x2="34" y2="28" stroke="#2a1f4a" stroke-width="2"/>
-      <line x1="38" y1="28" x2="48" y2="28" stroke="#2a1f4a" stroke-width="2"/>
-      <line x1="28" y1="38" x2="44" y2="38" stroke="#2a1f4a" stroke-width="1.5"/>
-      <ellipse cx="27" cy="35" rx="5" ry="3" fill="#f7a8c4" opacity="0.5"/>
-      <ellipse cx="45" cy="35" rx="5" ry="3" fill="#f7a8c4" opacity="0.5"/>
-      <text x="50" y="18" font-size="8" fill="#4a5280" font-family="monospace">z</text>
-      <text x="55" y="12" font-size="6" fill="#3a4060" font-family="monospace">z</text>
-    </svg>`
-  },
-  {
-    id:'bug',
-    name:'BugNuon',
-    mood:'comic relief · trolling',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg">
-      <ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff"/>
-      <path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff"/>
-      <text x="24" y="30" font-size="12" fill="#2a1f4a" font-family="monospace">^</text>
-      <text x="38" y="30" font-size="12" fill="#2a1f4a" font-family="monospace">^</text>
-      <path d="M28 41 Q36 46 44 41" stroke="#2a1f4a" stroke-width="2" fill="none"/>
-      <ellipse cx="27" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <ellipse cx="45" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <ellipse cx="20" cy="12" rx="5" ry="4" fill="#a78bfa" opacity="0.5"/>
-      <ellipse cx="52" cy="12" rx="5" ry="4" fill="#a78bfa" opacity="0.5"/>
-    </svg>`
-  },
-  {
-    id:'trace',
-    name:'TraceNuon',
-    mood:'reflective · learning',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg">
-      <ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff"/>
-      <path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff"/>
-      <text x="26" y="32" font-size="11" fill="#2a1f4a" font-family="monospace">^</text>
-      <text x="38" y="32" font-size="11" fill="#2a1f4a" font-family="monospace">^</text>
-      <path d="M29 42 Q36 47 43 42" stroke="#2a1f4a" stroke-width="2" fill="none"/>
-      <ellipse cx="27" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <ellipse cx="45" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/>
-      <text x="27" y="15" font-size="9" fill="#fcd34d" font-family="monospace">✦</text>
-      <text x="40" y="13" font-size="7" fill="#fcd34d" font-family="monospace">✦</text>
-      <text x="18" y="20" font-size="7" fill="#fcd34d" font-family="monospace">✦</text>
-    </svg>`
-  },
+const ALL_GHOSTS = [
+  {id:'crash', name:'CrashNuon', mood:"the \"i can't even\" ghost", fn:(w,h)=>G.crash(w,h)},
+  {id:'cry', name:'CryNuon', mood:'sad but relatable', fn:(w,h)=>G.uglycrying(w,h)},
+  {id:'loop', name:'LoopNuon', mood:'obsessive · grind mode', fn:(w,h)=>G.loop(w,h)},
+  {id:'glitch', name:'GlitchNuon', mood:'pure chaos', fn:(w,h)=>G.glitch(w,h)},
+  {id:'null', name:'NullNuon', mood:'apathetic · meh', fn:(w,h)=>G.null(w,h)},
+  {id:'bug', name:'BugNuon', mood:'comic relief · trolling', fn:(w,h)=>G.bug(w,h)},
+  {id:'trace', name:'TraceNuon', mood:'reflective · learning', fn:(w,h)=>G.trace(w,h)},
+  {id:'oops', name:'OopsNuon', mood:'minor disasters', fn:(w,h)=>G.oops(w,h)},
+  {id:'lag', name:'LagNuon', mood:'sleepy · burnt-out', fn:(w,h)=>G.lag(w,h)},
+  {id:'gremlin', name:'GremlinNuon', mood:'trolling · chaos', fn:(w,h)=>G.gremlin(w,h)},
+  {id:'blink', name:'BlinkNuon', mood:'random · motivational', fn:(w,h)=>G.blink(w,h)},
 ];
-
-const BONUS_COUNCIL=[
-  {id:'oops',name:'OopsNuon',mood:'minor disasters',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg"><ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff" opacity="0.8"/><path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff" opacity="0.8"/><text x="27" y="30" font-size="11" fill="#2a1f4a" font-family="monospace">o</text><text x="39" y="30" font-size="11" fill="#2a1f4a" font-family="monospace">o</text><path d="M30 42 Q36 46 42 42" stroke="#2a1f4a" stroke-width="1.5" fill="none"/><ellipse cx="27" cy="37" rx="4" ry="2.5" fill="#f7a8c4" opacity="0.6"/><ellipse cx="45" cy="37" rx="4" ry="2.5" fill="#f7a8c4" opacity="0.6"/></svg>`},
-  {id:'lag',name:'LagNuon',mood:'sleepy · burnt-out',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg"><ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff" opacity="0.8"/><path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff" opacity="0.8"/><line x1="24" y1="29" x2="34" y2="29" stroke="#2a1f4a" stroke-width="2"/><line x1="38" y1="29" x2="48" y2="29" stroke="#2a1f4a" stroke-width="2"/><line x1="28" y1="39" x2="44" y2="39" stroke="#2a1f4a" stroke-width="1.5"/><text x="50" y="20" font-size="9" fill="#4a5280" font-family="monospace">z</text><text x="55" y="14" font-size="7" fill="#3a4060" font-family="monospace">z</text><text x="58" y="10" font-size="5" fill="#2a3050" font-family="monospace">z</text></svg>`},
-  {id:'gremlin',name:'GremlinNuon',mood:'trolling · chaos',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg"><ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff" opacity="0.8"/><path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff" opacity="0.8"/><text x="23" y="30" font-size="13" fill="#2a1f4a" font-family="monospace">&gt;</text><text x="38" y="30" font-size="13" fill="#2a1f4a" font-family="monospace">&lt;</text><path d="M27 44 Q36 50 45 44" stroke="#2a1f4a" stroke-width="2" fill="none"/><line x1="14" y1="8" x2="20" y2="16" stroke="#f472b6" stroke-width="1.5"/><line x1="58" y1="8" x2="52" y2="16" stroke="#f472b6" stroke-width="1.5"/></svg>`},
-  {id:'blink',name:'BlinkNuon',mood:'random · motivational',
-    svg:(w,h)=>`<svg width="${w}" height="${h}" viewBox="0 0 72 80" class="nv-ghost-svg"><ellipse cx="36" cy="32" rx="25" ry="27" fill="#c4b0ff" opacity="0.8"/><path d="M11 32 Q11 60 18 60 Q22 60 22 56 Q22 60 27 60 Q32 60 32 56 Q32 60 36 60 Q40 60 40 56 Q40 60 45 60 Q50 60 50 56 Q50 60 54 60 Q61 60 61 32 Z" fill="#c4b0ff" opacity="0.8"/><text x="26" y="31" font-size="11" fill="#2a1f4a" font-family="monospace">*</text><text x="38" y="31" font-size="11" fill="#2a1f4a" font-family="monospace">*</text><path d="M29 42 Q36 47 43 42" stroke="#2a1f4a" stroke-width="2" fill="none"/><ellipse cx="27" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/><ellipse cx="45" cy="37" rx="5" ry="3" fill="#f7a8c4" opacity="0.7"/></svg>`},
-];
-
-function renderGhostCard(g, size=44, isBonus=false){
-  return `
-  <div class="nv-card${isBonus?' bonus':''}">
-    <div>${g.svg(size, Math.round(size*1.15))}</div>
-    <div class="nv-card-name" style="${isBonus?'font-size:7px;':''}">${g.name}</div>
-    <div class="nv-card-mood">${g.mood}</div>
-  </div>`;
-}
 
 async function init(){
-  document.getElementById('nav-root').innerHTML=renderNav('nuonverse');
-
-  // hero ghost trio
-  document.getElementById('heroGhosts').innerHTML=`
-    <div class="float">${GHOST.base(38,44)}</div>
-    ${GHOST.frustrated(28,34)}
-    ${GHOST.uglycrying(24,28)}`;
+  document.getElementById('nav-root').innerHTML = renderNav('nuonverse');
 
   // leader
-  document.getElementById('nuonLeader').innerHTML=GHOST.base(56,64);
+  document.getElementById('nuonLeader').innerHTML = G.base(60,68);
+  document.getElementById('nvSideNuon').innerHTML = G.base(52,60);
 
-  // core grid
-  document.getElementById('coreGrid').innerHTML=CORE_COUNCIL.map(g=>renderGhostCard(g,44)).join('');
+  // all ghosts grid
+  document.getElementById('nvGrid').innerHTML = ALL_GHOSTS.map(g=>`
+    <div class="nv-card">
+      <div>${g.fn(48,56)}</div>
+      <div class="nv-card-name">${g.name}</div>
+      <div class="nv-card-mood">${g.mood}</div>
+    </div>`).join('');
 
-  // bonus grid
-  document.getElementById('bonusGrid').innerHTML=BONUS_COUNCIL.map(g=>renderGhostCard(g,36,true)).join('');
+  document.getElementById('ghostCount').textContent = ALL_GHOSTS.length + 1;
+
+  // sidebar tags
+  const posts = await fetchPosts();
+  const counts={};
+  posts.filter(p=>p.published).forEach(p=>{counts[p.category]=(counts[p.category]||0)+1;});
+  const cats=['systems','dsa','rant','daily-log','milestone'];
+  document.getElementById('nvTagsRoot').innerHTML=`
+    <div class="sb-label">core dumps</div>
+    ${cats.map(c=>`
+      <div class="tag-row" onclick="location='/blog.html?tag=${c}'">
+        <span class="tag-name tc-${c}">#${c}</span>
+        <span class="tag-count">${String(counts[c]||0).padStart(2,'0')}</span>
+      </div>`).join('')}`;
+
+  initStars();
 }
 init();
 </script>
