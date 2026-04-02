@@ -1,0 +1,67 @@
+[
+  {
+    "id": "001",
+    "title": "why ZooKeeper made me question everything I thought I knew about consensus",
+    "category": "systems",
+    "tags": ["systems","distributed"],
+    "date": "2026-03-31",
+    "readTime": 8,
+    "mood": "exhausted",
+    "pinned": true,
+    "published": true,
+    "excerpt": "the assignment said implement leader election like it costs nothing. four hours later I was questioning my entire understanding of state machines.",
+    "file": "posts/001.json"
+  },
+  {
+    "id": "002",
+    "title": "sliding window clicked today and I cried a little",
+    "category": "dsa",
+    "tags": ["dsa","leetcode"],
+    "date": "2026-03-30",
+    "readTime": 3,
+    "mood": "uglycrying",
+    "pinned": false,
+    "published": true,
+    "excerpt": "leetcode 239. the deque thing. I ACTUALLY get it now.",
+    "file": "posts/002.json"
+  },
+  {
+    "id": "003",
+    "title": "oracle prepared me for nothing and also everything",
+    "category": "rant",
+    "tags": ["rant"],
+    "date": "2026-03-28",
+    "readTime": 5,
+    "mood": "frustrated",
+    "pinned": false,
+    "published": true,
+    "excerpt": "energy and water: meetings about meetings. julia infra: nothing is stable and thats fine.",
+    "file": "posts/003.json"
+  },
+  {
+    "id": "004",
+    "title": "day 47: still alive, surprisingly",
+    "category": "daily-log",
+    "tags": ["daily-log"],
+    "date": "2026-03-27",
+    "readTime": 2,
+    "mood": "exhausted",
+    "pinned": false,
+    "published": true,
+    "excerpt": "just checking in. nuon witnessed it.",
+    "file": "posts/004.json"
+  },
+  {
+    "id": "005",
+    "title": "4.0 locked in. nuon witnessed it.",
+    "category": "milestone",
+    "tags": ["milestone"],
+    "date": "2026-03-25",
+    "readTime": 1,
+    "mood": "victory",
+    "pinned": false,
+    "published": true,
+    "excerpt": "it happened. somehow.",
+    "file": "posts/005.json"
+  }
+]

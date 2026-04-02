@@ -1,0 +1,12 @@
+{
+  "id": "001",
+  "title": "why ZooKeeper made me question everything I thought I knew about consensus",
+  "category": "systems",
+  "tags": ["systems","distributed"],
+  "date": "2026-03-31",
+  "readTime": 8,
+  "mood": "exhausted",
+  "pinned": true,
+  "published": true,
+  "content": "<h2>so it dropped casually</h2><p>the assignment said implement leader election like it costs nothing. four hours later I was questioning everything.</p><pre><code class=\"language-java\">LeaderLatch latch = new LeaderLatch(curator, \"/election\");\nlatch.start();\nif (latch.hasLeadership()) {\n  doLeaderThings();\n}</code></pre><blockquote>a distributed system is one in which the failure of a computer you didn't even know existed can render your own computer unusable — leslie lamport</blockquote><p>anyway. I get it now. barely. nuon witnessed the whole breakdown.</p>"
+}

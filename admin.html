@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin — SociallyNu.</title>
+<link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<style>
+body{overflow:hidden;}
+.adm-topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg);}
+.adm-title{font-family:var(--font-mono);font-size:9px;letter-spacing:3px;color:var(--purple);text-transform:uppercase;}
+.adm-title em{color:var(--pink);font-style:normal;}
+.adm-topright{display:flex;align-items:center;gap:8px;}
+.status{font-family:var(--font-mono);font-size:7px;color:var(--green);display:flex;align-items:center;gap:4px;}
+.status-dot{width:5px;height:5px;border-radius:50%;background:var(--green);}
+.adm-body{display:grid;grid-template-columns:200px 1fr;height:calc(100vh - 46px);}
+.adm-sidebar{border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.adm-sb-top{padding:10px 12px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.new-btn{width:100%;font-family:var(--font-mono);font-size:8px;padding:7px;background:var(--bg3);color:var(--purple);border:1px dashed #2a1f4a;border-radius:6px;cursor:pointer;}
+.new-btn:hover{background:#0d0a1e;}
+.search-in{width:100%;font-family:var(--font-mono);font-size:8px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:5px 8px;color:var(--text-muted);outline:none;margin-top:6px;}
+.adm-posts{flex:1;overflow-y:auto;padding:4px 0;}
+.adm-group-label{font-family:var(--font-mono);font-size:7px;letter-spacing:2px;text-transform:uppercase;padding:8px 12px 4px;display:flex;justify-content:space-between;}
+.adm-group-label span:last-child{color:var(--text-dim);}
+.adm-post-item{padding:7px 12px;cursor:pointer;border-left:2px solid transparent;position:relative;}
+.adm-post-item:hover{background:var(--bg2);}
+.adm-post-item:hover .post-actions{display:flex;}
+.adm-post-item.active{background:#0d0a1e;border-left-color:var(--purple);}
+.post-actions{display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);gap:4px;}
+.post-action-btn{font-family:var(--font-mono);font-size:6px;padding:2px 5px;border-radius:3px;cursor:pointer;border:none;}
+.pa-del{background:#1a0810;color:var(--pink);}
+.adm-main{display:flex;flex-direction:column;overflow:hidden;}
+.meta-bar{padding:10px 14px;border-bottom:1px solid #0a0d18;display:flex;gap:8px;align-items:center;flex-wrap:wrap;flex-shrink:0;}
+.title-input{font-family:var(--font-body);font-size:13px;background:transparent;border:none;outline:none;color:var(--text-primary);flex:1;min-width:200px;}
+.title-input::placeholder{color:var(--text-dim);}
+.cat-sel{font-family:var(--font-mono);font-size:7px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;color:var(--text-muted);outline:none;}
+.mood-sel{font-family:var(--font-mono);font-size:7px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 6px;color:var(--text-muted);outline:none;}
+.tag-input{font-family:var(--font-mono);font-size:7px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:3px 8px;color:var(--text-muted);outline:none;width:90px;}
+.toolbar{padding:6px 14px;border-bottom:1px solid #0a0d18;display:flex;align-items:center;gap:3px;flex-shrink:0;flex-wrap:wrap;}
+.tb-group{display:flex;gap:2px;padding-right:6px;border-right:1px solid var(--border);margin-right:3px;}
+.tb-group:last-child{border-right:none;}
+.tb-label{font-family:var(--font-mono);font-size:6px;letter-spacing:1px;color:var(--text-dim);text-transform:uppercase;padding:0 2px;}
+.tabs{display:flex;border-bottom:1px solid #0a0d18;flex-shrink:0;}
+.tab{font-family:var(--font-mono);font-size:7px;letter-spacing:2px;text-transform:uppercase;padding:7px 14px;color:var(--text-dim);cursor:pointer;border-bottom:2px solid transparent;}
+.tab.active{color:var(--purple);border-bottom-color:var(--purple);}
+.editor-wrap{flex:1;overflow:hidden;display:flex;}
+.editor{flex:1;padding:14px 16px;overflow-y:auto;outline:none;font-family:var(--font-body);font-size:12px;color:var(--text-secondary);line-height:1.8;min-height:100%;}
+.editor:empty:before{content:"start writing...";color:var(--text-dim);}
+.preview{flex:1;padding:14px 20px;overflow-y:auto;border-left:1px solid var(--border);}
+.preview{display:none;}
+.preview.show{display:block;}
+.html-view{flex:1;padding:14px 16px;overflow-y:auto;border-left:1px solid var(--border);font-family:var(--font-mono);font-size:10px;color:var(--text-muted);line-height:1.7;white-space:pre-wrap;word-break:break-all;}
+.html-view{display:none;}
+.html-view.show{display:block;}
+.bottombar{padding:6px 14px;border-top:1px solid #0a0d18;display:flex;gap:14px;align-items:center;flex-shrink:0;}
+.bstat{font-family:var(--font-mono);font-size:7px;color:var(--text-dim);}
+.bstat span{color:var(--text-muted);}
+.ghost-picker{position:absolute;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:10px;display:none;z-index:100;gap:8px;flex-wrap:wrap;width:200px;}
+.ghost-picker.show{display:flex;}
+.ghost-opt{cursor:pointer;padding:4px;border-radius:4px;}
+.ghost-opt:hover{background:var(--bg3);}
+.ghost-opt-label{font-family:var(--font-mono);font-size:6px;color:var(--text-dim);text-align:center;margin-top:2px;}
+/* login screen */
+.login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;}
+.login-box{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:32px;display:flex;flex-direction:column;align-items:center;gap:14px;min-width:280px;}
+.login-logo{font-family:var(--font-serif);font-style:italic;font-size:22px;color:#d4c5fa;}
+.login-logo em{color:var(--pink);font-style:normal;}
+.login-input{font-family:var(--font-mono);font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--text-primary);outline:none;width:100%;text-align:center;letter-spacing:3px;}
+.login-btn{width:100%;font-family:var(--font-mono);font-size:9px;letter-spacing:2px;padding:8px;background:var(--purple);color:var(--bg);border:none;border-radius:6px;cursor:pointer;text-transform:uppercase;}
+.login-note{font-family:var(--font-mono);font-size:7px;color:var(--text-dim);text-align:center;}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">SociallyNu<em>.</em></div>
+    <div style="font-family:var(--font-mono);font-size:8px;letter-spacing:2px;color:var(--text-dim);">ADMIN ACCESS</div>
+    <div class="float" style="margin:4px 0;">${''}</div>
+    <input class="login-input" type="password" id="passInput" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="login-btn" onclick="doLogin()">enter the void →</button>
+    <div class="login-note">nuon is watching. enter carefully.</div>
+    <div class="login-note" style="margin-top:8px;">first time? set token: <br><input id="tokenInput" placeholder="github token" style="font-family:var(--font-mono);font-size:7px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;padding:3px 6px;color:var(--text-muted);outline:none;width:100%;margin-top:4px;"/></div>
+  </div>
+</div>
+
+<!-- ADMIN UI -->
+<div id="adminUI" style="display:none;">
+<div class="adm-topbar">
+  <div class="adm-title">// SociallyNu<em>.</em> admin</div>
+  <div class="adm-topright">
+    <div class="status"><div class="status-dot"></div>nuon is watching</div>
+    <button class="adm-btn btn-save" onclick="saveDraft()">save draft</button>
+    <button class="adm-btn btn-pub" onclick="publishPost()">publish →</button>
+    <button class="adm-btn" onclick="adminLogout();location.reload();" style="background:var(--bg2);color:var(--text-muted);border:1px solid var(--border);">logout</button>
+  </div>
+</div>
+
+<div class="adm-body">
+  <div class="adm-sidebar">
+    <div class="adm-sb-top">
+      <button class="new-btn" onclick="newPost()">+ new post</button>
+      <input class="search-in" placeholder="search posts..." oninput="filterSidebar(this.value)"/>
+    </div>
+    <div class="adm-posts" id="sidebarPosts"></div>
+  </div>
+
+  <div class="adm-main">
+    <div class="meta-bar">
+      <input class="title-input" id="titleInput" placeholder="post title..."/>
+      <select class="cat-sel" id="catSel">
+        <option value="systems">#systems</option>
+        <option value="dsa">#dsa</option>
+        <option value="rant">#rant</option>
+        <option value="daily-log">#daily-log</option>
+        <option value="milestone">#milestone</option>
+      </select>
+      <select class="mood-sel" id="moodSel">
+        <option value="exhausted">exhausted</option>
+        <option value="uglycrying">ugly crying</option>
+        <option value="frustrated">frustrated</option>
+        <option value="victory">victory</option>
+        <option value="smirking">smirking</option>
+        <option value="skull">skull</option>
+      </select>
+      <input class="tag-input" id="tagInput" placeholder="extra tags..."/>
+      <label style="font-family:var(--font-mono);font-size:7px;color:var(--text-dim);display:flex;gap:4px;align-items:center;cursor:pointer;">
+        <input type="checkbox" id="pinnedCheck"/> pinned
+      </label>
+    </div>
+
+    <div class="toolbar">
+      <div class="tb-group">
+        <span class="tb-label">text</span>
+        <button class="tb-btn" onclick="fmt('bold')"><b>B</b></button>
+        <button class="tb-btn" onclick="fmt('italic')"><i>I</i></button>
+        <button class="tb-btn" onclick="fmt('underline')"><u>U</u></button>
+        <button class="tb-btn" onclick="fmt('strikeThrough')"><s>S</s></button>
+      </div>
+      <div class="tb-group">
+        <span class="tb-label">heading</span>
+        <button class="tb-btn" onclick="insertHeading(1)">H1</button>
+        <button class="tb-btn" onclick="insertHeading(2)">H2</button>
+        <button class="tb-btn" onclick="insertHeading(3)">H3</button>
+      </div>
+      <div class="tb-group">
+        <span class="tb-label">blocks</span>
+        <button class="tb-btn" onclick="insertCode()">&lt;/&gt;</button>
+        <button class="tb-btn" onclick="insertQuote()">❝</button>
+        <button class="tb-btn" onclick="insertLatex()">∑</button>
+      </div>
+      <div class="tb-group">
+        <span class="tb-label">insert</span>
+        <button class="tb-btn" onclick="insertImg()">img</button>
+        <button class="tb-btn" onclick="insertGif()">gif</button>
+        <button class="tb-btn" onclick="insertVideo()">vid</button>
+        <button class="tb-btn" onclick="toggleGhostPicker()" id="ghostPickerBtn">👻</button>
+        <button class="tb-btn" onclick="insertEmoji()">☺</button>
+      </div>
+      <div class="tb-group">
+        <span class="tb-label">post</span>
+        <button class="tb-btn" onclick="togglePin()">📌</button>
+        <button class="tb-btn" onclick="crosspostTumblr()">tumblr ↗</button>
+      </div>
+    </div>
+
+    <!-- ghost picker dropdown -->
+    <div class="ghost-picker" id="ghostPicker" style="position:absolute;margin-top:80px;margin-left:200px;"></div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('write',this)">write</div>
+      <div class="tab" onclick="switchTab('preview',this)">preview</div>
+      <div class="tab" onclick="switchTab('html',this)">html</div>
+    </div>
+
+    <div class="editor-wrap">
+      <div class="editor" id="editor" contenteditable="true"></div>
+      <div class="preview post-content" id="previewPane"></div>
+      <div class="html-view" id="htmlPane"></div>
+    </div>
+
+    <div class="bottombar">
+      <div class="bstat">words: <span id="wordCount">0</span></div>
+      <div class="bstat">read time: <span id="readTime">~0 min</span></div>
+      <div class="bstat">status: <span id="statusEl" style="color:var(--yellow);">unsaved</span></div>
+      <div class="bstat" style="margin-left:auto;">last saved: <span id="lastSaved">—</span></div>
+      <div class="bstat" id="currentId" style="color:var(--text-dim);"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<script src="/assets/js/main.js"></script>
+<script>
+// ── STATE ────────────────────────────────────────────────────
+let allPosts=[], editingId=null, isDraft=false;
+const editor=document.getElementById('editor');
+
+// ── LOGIN ────────────────────────────────────────────────────
+function doLogin(){
+  const pass=document.getElementById('passInput').value;
+  const token=document.getElementById('tokenInput').value;
+  if(token) localStorage.setItem(GITHUB_TOKEN_KEY,token);
+  if(adminLogin(pass)){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminUI').style.display='block';
+    adminInit();
+  } else {
+    document.getElementById('passInput').style.borderColor='var(--pink)';
+  }
+}
+
+// show admin immediately if already logged in
+if(isAdmin()){
+  document.getElementById('loginScreen').style.display='none';
+  document.getElementById('adminUI').style.display='block';
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+async function adminInit(){
+  allPosts=await fetchPosts();
+  renderSidebarPosts();
+  // populate ghost picker
+  const moods=['exhausted','uglycrying','frustrated','victory','smirking','skull'];
+  document.getElementById('ghostPicker').innerHTML=moods.map(m=>`
+    <div class="ghost-opt" onclick="insertGhost('${m}')">
+      ${getMoodGhost(m,28,32)}
+      <div class="ghost-opt-label">${m}</div>
+    </div>`).join('');
+  // check if edit param
+  const params=new URLSearchParams(location.search);
+  const editId=params.get('edit');
+  if(editId){
+    const p=allPosts.find(x=>x.id===editId);
+    if(p) loadPost(p);
+  }
+  // word count
+  editor.addEventListener('input',updateStats);
+}
+
+// ── SIDEBAR ──────────────────────────────────────────────────
+function renderSidebarPosts(filter=''){
+  const cats=['systems','dsa','rant','daily-log','milestone'];
+  let html='';
+  cats.forEach(cat=>{
+    const catPosts=allPosts.filter(p=>p.category===cat&&(filter===''||p.title.toLowerCase().includes(filter)));
+    if(!catPosts.length) return;
+    html+=`<div class="adm-group-label"><span class="tc-${cat}">#${cat}</span><span>${catPosts.length}</span></div>`;
+    catPosts.forEach(p=>{
+      html+=`
+        <div class="adm-post-item${editingId===p.id?' active':''}" onclick="loadPost(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+          <div class="adm-post-item-title">${p.pinned?'📌 ':''}${p.title}</div>
+          <div class="adm-post-meta"><span>${p.date}</span><span style="color:${p.published?'var(--green)':'var(--yellow)'};">${p.published?'pub':'draft'}</span></div>
+          <div class="post-actions">
+            <button class="post-action-btn pa-del" onclick="event.stopPropagation();deletePostById('${p.id}')">del</button>
+          </div>
+        </div>`;
+    });
+  });
+  document.getElementById('sidebarPosts').innerHTML=html||`<div style="padding:12px;font-family:var(--font-mono);font-size:8px;color:var(--text-dim);">no posts yet</div>`;
+}
+
+function filterSidebar(q){renderSidebarPosts(q.toLowerCase());}
+
+// ── LOAD / NEW POST ──────────────────────────────────────────
+async function loadPost(meta){
+  editingId=meta.id;
+  document.getElementById('titleInput').value=meta.title;
+  document.getElementById('catSel').value=meta.category;
+  document.getElementById('moodSel').value=meta.mood;
+  document.getElementById('tagInput').value=meta.tags.filter(t=>t!==meta.category).join(', ');
+  document.getElementById('pinnedCheck').checked=!!meta.pinned;
+  document.getElementById('currentId').textContent=`id: ${meta.id}`;
+  try{
+    const p=await fetchPost(meta.file);
+    editor.innerHTML=p.content||'';
+  }catch(e){editor.innerHTML='';}
+  updateStats();
+  renderSidebarPosts();
+  switchTab('write',document.querySelector('.tab'));
+}
+
+function newPost(){
+  editingId=null;
+  document.getElementById('titleInput').value='';
+  document.getElementById('catSel').value='systems';
+  document.getElementById('moodSel').value='exhausted';
+  document.getElementById('tagInput').value='';
+  document.getElementById('pinnedCheck').checked=false;
+  document.getElementById('currentId').textContent='new post';
+  editor.innerHTML='';
+  updateStats();
+}
+
+// ── SAVE / PUBLISH ───────────────────────────────────────────
+async function saveDraft(){await save(false);}
+async function publishPost(){await save(true);}
+
+async function save(publish){
+  const title=document.getElementById('titleInput').value.trim();
+  if(!title){alert('add a title first');return;}
+  const id=editingId||genId();
+  const cat=document.getElementById('catSel').value;
+  const mood=document.getElementById('moodSel').value;
+  const extraTags=document.getElementById('tagInput').value.split(',').map(t=>t.trim()).filter(Boolean);
+  const tags=[cat,...extraTags];
+  const content=editor.innerHTML;
+  const readTime=calcReadTime(content);
+  const pinned=document.getElementById('pinnedCheck').checked;
+  const date=new Date().toISOString().split('T')[0];
+
+  const postData={id,title,category:cat,tags,date,readTime,mood,pinned,published:publish,content};
+  const metaData={id,title,category:cat,tags,date,readTime,mood,pinned,published:publish,
+    excerpt:editor.innerText.slice(0,150).replace(/\n/g,' '),file:`posts/${id}.json`};
+
+  document.getElementById('statusEl').textContent='saving...';
+  const saved=await githubSave(`posts/${id}.json`,postData,`${publish?'publish':'draft'}: ${title}`);
+  if(!saved){document.getElementById('statusEl').textContent='save failed';return;}
+
+  // update index
+  const idx=allPosts.findIndex(p=>p.id===id);
+  if(idx>=0) allPosts[idx]=metaData;
+  else allPosts.unshift(metaData);
+  await githubSave('posts/index.json',allPosts,'update index');
+
+  editingId=id;
+  document.getElementById('statusEl').textContent=publish?'published':'draft';
+  document.getElementById('statusEl').style.color=publish?'var(--green)':'var(--yellow)';
+  document.getElementById('lastSaved').textContent='just now';
+  document.getElementById('currentId').textContent=`id: ${id}`;
+  renderSidebarPosts();
+}
+
+// ── DELETE ───────────────────────────────────────────────────
+async function deletePostById(id){
+  if(!confirm('delete permanently?')) return;
+  allPosts=allPosts.filter(p=>p.id!==id);
+  await githubSave('posts/index.json',allPosts,'delete post '+id);
+  if(editingId===id) newPost();
+  renderSidebarPosts();
+}
+
+// ── TOOLBAR FUNCTIONS ─────────────────────────────────────────
+function fmt(cmd){document.execCommand(cmd,false,null);editor.focus();}
+
+function insertHeading(level){
+  const sel=window.getSelection();
+  const text=sel.toString()||'heading';
+  const node=document.createElement(`h${level}`);
+  node.textContent=text;
+  insertNode(node);
+}
+
+function insertCode(){
+  const block=document.createElement('pre');
+  const code=document.createElement('code');
+  code.className='language-python';
+  code.textContent='# your code here';
+  block.appendChild(code);
+  insertNode(block);
+}
+
+function insertQuote(){
+  const bq=document.createElement('blockquote');
+  bq.innerHTML='<p>quote text here</p>';
+  insertNode(bq);
+}
+
+function insertLatex(){
+  const span=document.createElement('span');
+  span.className='katex-src katex-display';
+  span.textContent='E = mc^2';
+  insertNode(span);
+}
+
+function insertImg(){
+  const url=prompt('image URL:');
+  if(!url) return;
+  const img=document.createElement('img');
+  img.src=url;img.style.maxWidth='100%';img.style.borderRadius='6px';
+  insertNode(img);
+}
+
+function insertGif(){
+  const url=prompt('gif URL:');
+  if(!url) return;
+  const img=document.createElement('img');
+  img.src=url;img.style.maxWidth='100%';
+  insertNode(img);
+}
+
+function insertVideo(){
+  const url=prompt('video URL (youtube/direct):');
+  if(!url) return;
+  let el;
+  if(url.includes('youtube.com')||url.includes('youtu.be')){
+    const vid=url.split('v=')[1]||url.split('/').pop();
+    el=document.createElement('iframe');
+    el.src=`https://www.youtube.com/embed/${vid}`;
+    el.width='100%';el.height='360';el.frameBorder='0';el.allowFullscreen=true;
+    el.style.borderRadius='6px';
+  } else {
+    el=document.createElement('video');
+    el.src=url;el.controls=true;el.style.maxWidth='100%';el.style.borderRadius='6px';
+  }
+  insertNode(el);
+}
+
+function toggleGhostPicker(){
+  document.getElementById('ghostPicker').classList.toggle('show');
+}
+
+function insertGhost(mood){
+  const span=document.createElement('span');
+  span.className='ghost-inline';
+  span.innerHTML=`${getMoodGhost(mood,16,18)} ${mood}`;
+  insertNode(span);
+  document.getElementById('ghostPicker').classList.remove('show');
+}
+
+function insertEmoji(){
+  const e=prompt('paste emoji:');
+  if(e) document.execCommand('insertText',false,e);
+  editor.focus();
+}
+
+function togglePin(){
+  const cb=document.getElementById('pinnedCheck');
+  cb.checked=!cb.checked;
+}
+
+function insertNode(node){
+  editor.focus();
+  const sel=window.getSelection();
+  if(sel.rangeCount){
+    const range=sel.getRangeAt(0);
+    range.deleteContents();
+    range.insertNode(node);
+    range.collapse(false);
+  } else {
+    editor.appendChild(node);
+  }
+  updateStats();
+}
+
+// ── TABS ─────────────────────────────────────────────────────
+function switchTab(tab, el){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  if(el) el.classList.add('active');
+  else document.querySelectorAll('.tab').forEach((t,i)=>{if(['write','preview','html'][i]===tab)t.classList.add('active');});
+  document.getElementById('editor').style.display=tab==='write'?'block':'none';
+  const prev=document.getElementById('previewPane');
+  const html=document.getElementById('htmlPane');
+  prev.classList.toggle('show',tab==='preview');
+  html.classList.toggle('show',tab==='html');
+  if(tab==='preview'){prev.innerHTML=editor.innerHTML;Prism.highlightAllUnder(prev);}
+  if(tab==='html'){html.textContent=editor.innerHTML;}
+}
+
+// ── STATS ─────────────────────────────────────────────────────
+function updateStats(){
+  const text=editor.innerText.trim();
+  const words=text?text.split(/\s+/).length:0;
+  document.getElementById('wordCount').textContent=words;
+  document.getElementById('readTime').textContent=`~${Math.max(1,Math.round(words/200))} min`;
+  document.getElementById('statusEl').textContent='unsaved';
+  document.getElementById('statusEl').style.color='var(--yellow)';
+}
+
+// ── TUMBLR ───────────────────────────────────────────────────
+async function crosspostTumblr(){
+  const token=prompt('tumblr OAuth token (set up in tumblr developer settings):');
+  if(!token) return;
+  const title=document.getElementById('titleInput').value;
+  const body=editor.innerHTML;
+  const r=await fetch('https://api.tumblr.com/v2/blog/sociallynu.tumblr.com/posts',{
+    method:'POST',
+    headers:{'Authorization':`Bearer ${token}`,'Content-Type':'application/json'},
+    body:JSON.stringify({type:'text',title,body,tags:[document.getElementById('catSel').value]})
+  });
+  alert(r.ok?'posted to tumblr!':'tumblr post failed - check token');
+}
+
+// auto-save draft every 2 mins
+setInterval(()=>{
+  if(editingId&&editor.innerText.trim()) saveDraft();
+},120000);
+
+// close ghost picker on outside click
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#ghostPicker')&&!e.target.closest('#ghostPickerBtn'))
+    document.getElementById('ghostPicker').classList.remove('show');
+});
+
+if(isAdmin()) adminInit();
+</script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SociallyNu.</title>
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<div id="nav-root"></div>
+<div class="page-body">
+  <div id="sidebar-root"></div>
+  <main class="main" id="main-root">
+    <div class="hero">
+      <div class="hero-accountability">// accountability blog</div>
+      <div class="hero-vol">vol. 1</div>
+      <div class="hero-h1">learning arc or<br>villain origin<br>story.</div>
+      <div class="chaos-wrap" id="chaosWrap"></div>
+    </div>
+    <div id="pinned-root"></div>
+    <div class="divider"><span class="div-label">recent</span><div class="div-line"></div></div>
+    <div id="posts-root"></div>
+  </main>
+</div>
+<script src="/assets/js/main.js"></script>
+<script>
+const CHAOS = [
+  {t:"error 404: consistency not found",x:"8px",y:"4px",r:"1.5deg",c:"#3a4a70"},
+  {t:"sudo make me consistent",x:"28px",y:"24px",r:"-2deg",c:"#344268"},
+  {t:"this will make sense eventually (threat)",x:"4px",y:"46px",r:"1deg",c:"#2e3c62"},
+  {t:"gaslighting myself into understanding",x:"18px",y:"64px",r:"-1.5deg",c:"#283460"},
+  {t:"ctrl + z but for life pls",x:"6px",y:"82px",r:"2deg",c:"#223058"},
+  {t:"trust the process (i don't)",x:"22px",y:"100px",r:"-1deg",c:"#1c2850"},
+  {t:"skill issue (fixing)",x:"4px",y:"116px",r:"1.2deg",c:"#172048"},
+];
+
+document.getElementById('chaosWrap').innerHTML = CHAOS.map(q=>
+  `<div class="chaos-q" style="right:${q.x};top:${q.y};transform:rotate(${q.r});color:${q.c};">${q.t}</div>`
+).join('');
+
+async function init(){
+  const posts = await fetchPosts();
+  // NAV
+  document.getElementById('nav-root').innerHTML = renderNav();
+  // SIDEBAR
+  document.getElementById('sidebar-root').innerHTML = await renderSidebar(posts, ['exhausted','uglycrying']);
+  // PINNED
+  const pinned = posts.filter(p=>p.pinned&&p.published);
+  if(pinned.length){
+    document.getElementById('pinned-root').innerHTML = `
+      <div class="divider"><span class="div-label">📌 pinned</span><div class="div-line"></div></div>
+      ${pinned.map(p=>`
+        <div class="pin-card" onclick="location='/post.html?id=${p.id}'">
+          <div class="tape"></div>
+          <div class="pin-dot"></div>
+          <div style="flex:1;">
+            <div class="post-tag tc-${p.category}">// ${p.category}</div>
+            <div class="post-title">${p.title}</div>
+            <div class="post-meta"><span>pinned</span><span>${p.readTime} min read</span></div>
+          </div>
+          ${getMoodGhost(p.mood,22,26)}
+        </div>`).join('')}
+    `;
+  }
+  // RECENT POSTS
+  const recent = posts.filter(p=>p.published&&!p.pinned).slice(0,8);
+  document.getElementById('posts-root').innerHTML = recent.map((p,i)=>{
+    const isCard = p.category==='dsa'||p.category==='rant';
+    const inner = `
+      <div class="post-tag tc-${p.category}">// ${p.category}</div>
+      <div class="post-title">${p.title}</div>
+      <div class="post-meta"><span>${formatDate(p.date)}</span><span>${p.readTime} min read</span></div>`;
+    return `
+    <div class="post-item" onclick="location='/post.html?id=${p.id}'">
+      <div class="post-num">${String(i+1+pinned.length).padStart(2,'0')}</div>
+      ${isCard?`<div class="card-wrap card-${p.category}"><div class="tape${p.category==='rant'?' tape-pink':''}"></div>${inner}</div>`:`<div>${inner}</div>`}
+      ${getMoodGhost(p.mood,22,26)}
+    </div>`;
+  }).join('');
+
+  // ADMIN bar if logged in
+  if(isAdmin()){
+    document.body.insertAdjacentHTML('afterbegin',`
+      <div style="background:#0d0a1e;border-bottom:1px solid #2a1f4a;padding:6px 20px;display:flex;gap:8px;align-items:center;">
+        <span style="font-family:var(--font-mono);font-size:7px;color:#3a2f6a;flex:1;">// admin mode</span>
+        <a href="/admin.html" style="font-family:var(--font-mono);font-size:7px;color:var(--purple);">open admin →</a>
+        <button onclick="adminLogout();location.reload();" style="font-family:var(--font-mono);font-size:7px;color:var(--text-muted);background:none;border:none;cursor:pointer;">logout</button>
+      </div>`);
+  }
+}
+init();
+</script>
+</body>
+</html>
