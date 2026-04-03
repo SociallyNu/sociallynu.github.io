@@ -77,12 +77,10 @@ async function fetchAbout(){try{const r=await fetch('/posts/about.json?v='+Date.
 const PFP_PATH='images/pfp.jpg';
 // github pages serves files at the site URL — works for EVERYONE not just you
 function getPfpUrl(){
-  const user=GITHUB_REPO.split('/')[0];
   const repo=GITHUB_REPO.split('/')[1];
-  // if repo is username.github.io, site is at https://username.github.io
-  // otherwise https://username.github.io/reponame
-  const isUserSite=repo===`${user}.github.io`;
-  return isUserSite?`https://${repo}/${PFP_PATH}`:`https://${user}.github.io/${repo}/${PFP_PATH}`;
+  // repo IS the github pages domain (e.g. sociallynu.github.io)
+  // so the site URL is simply https://repo/
+  return `https://${repo}/${PFP_PATH}`;
 }
 async function applyPfp(els){
   if(!els||!els.length)return;

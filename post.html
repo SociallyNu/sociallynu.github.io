@@ -119,12 +119,13 @@ async function init(){
 function buildTOC(){
   const content=document.getElementById('postContent');
   if(!content)return;
-  const headings=content.querySelectorAll('h1,h2,h3,h4');
+  const headings=content.querySelectorAll('h1,h2,h3,h4,h5,h6');
   if(!headings.length){document.getElementById('tocRoot').innerHTML='';return;}
   let n=1;
   const items=Array.from(headings).map(h=>{
     const hid=`h-${n}`;h.id=hid;
-    const cls=h.tagName==='H3'||h.tagName==='H4'?' h3':'';
+    const indent={'H1':'','H2':'','H3':' h3','H4':' h3','H5':' h3','H6':' h3'};
+    const cls=indent[h.tagName]||'';
     return `<div class="toc-item${cls}" onclick="document.getElementById('${hid}').scrollIntoView({behavior:'smooth'})"><span class="toc-num">${String(n++).padStart(2,'0')}</span>${h.textContent.slice(0,40)}</div>`;
   });
   document.getElementById('tocRoot').innerHTML=`<div class="sb-label">in this post</div>${items.join('')}`;

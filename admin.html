@@ -440,6 +440,27 @@ function insertLink(){
 }
 
 function fmt(cmd){document.execCommand(cmd,false,null);editor.focus();}
+function applyFontSize(size){
+  if(!size)return;
+  const sel=window.getSelection();
+  if(!sel.rangeCount||sel.isCollapsed){editor.focus();return;}
+  // wrap selected text in a span with font-size
+  const range=sel.getRangeAt(0);
+  const span=document.createElement('span');
+  span.style.fontSize=size;
+  try{range.surroundContents(span);}
+  catch(e){
+    // selection crosses elements - use execCommand as fallback
+    document.execCommand('fontSize',false,'7');
+    editor.querySelectorAll('font[size="7"]').forEach(f=>{
+      const s=document.createElement('span');
+      s.style.fontSize=size;
+      s.innerHTML=f.innerHTML;
+      f.replaceWith(s);
+    });
+  }
+  editor.focus();
+}
 function fmtMono(){const sel=window.getSelection();if(!sel.rangeCount)return;const r=sel.getRangeAt(0);const t=r.toString();if(!t){editor.focus();return;}const c=document.createElement('code');c.textContent=t;r.deleteContents();r.insertNode(c);editor.focus();}
 function insertH(level){
   const sel=window.getSelection();const text=sel.toString()||`heading ${level}`;
