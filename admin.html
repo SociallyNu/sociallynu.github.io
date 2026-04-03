@@ -175,7 +175,8 @@ body{overflow:hidden;}
           <button class="tb-btn" onclick="fmtMono()" style="font-family:monospace;">M</button>
         </div>
         <div class="tb-grp">
-          <span class="tb-lbl">heading</span>
+          <span class="tb-lbl">text</span>
+          <button class="tb-btn" onclick="insertParagraph()" title="normal paragraph">¶ p</button>
           <button class="tb-btn" onclick="insertH(1)">H1</button>
           <button class="tb-btn" onclick="insertH(2)">H2</button>
           <button class="tb-btn" onclick="insertH(3)">H3</button>
@@ -440,7 +441,21 @@ function insertLink(){
 
 function fmt(cmd){document.execCommand(cmd,false,null);editor.focus();}
 function fmtMono(){const sel=window.getSelection();if(!sel.rangeCount)return;const r=sel.getRangeAt(0);const t=r.toString();if(!t){editor.focus();return;}const c=document.createElement('code');c.textContent=t;r.deleteContents();r.insertNode(c);editor.focus();}
-function insertH(level){const sel=window.getSelection();const text=sel.toString()||`heading ${level}`;const h=document.createElement(`h${level}`);h.textContent=text;insertNode(h);}
+function insertH(level){
+  const sel=window.getSelection();const text=sel.toString()||`heading ${level}`;
+  const h=document.createElement(`h${level}`);h.textContent=text;
+  insertNode(h);
+  // place cursor after
+  const p=document.createElement('p');p.innerHTML='<br>';h.after(p);
+  const r=document.createRange();r.setStart(p,0);r.collapse(true);
+  const s=window.getSelection();s.removeAllRanges();s.addRange(r);
+}
+function insertParagraph(){
+  const p=document.createElement('p');p.innerHTML='<br>';
+  insertNode(p);
+  const r=document.createRange();r.setStart(p,0);r.collapse(true);
+  const s=window.getSelection();s.removeAllRanges();s.addRange(r);
+}
 
 function insertCode(){
   const lang=prompt('language:','python')||'python';
@@ -510,11 +525,7 @@ function switchTab(tab,el){
     const pane=document.getElementById('previewPane');
     pane.innerHTML=editor.innerHTML;
     if(window.Prism)Prism.highlightAllUnder(pane);
-    // render latex blocks
-    pane.querySelectorAll('.latex-block').forEach(el=>{
-      const expr=el.getAttribute('data-latex');
-      if(expr&&window.katex){try{katex.render(expr,el,{displayMode:true,throwOnError:false});}catch(e){}}
-    });
+    renderAllLatex(pane);
   }
   if(tab==='html')document.getElementById('htmlPane').textContent=editor.innerHTML;
 }
@@ -567,6 +578,19 @@ function tblSplit(){
     td.contentEditable='true';td.textContent='cell';
     c.after(td);
   }
+}
+
+function renderAllLatex(container){
+  if(!window.katex) return;
+  (container||document).querySelectorAll('.latex-block[data-latex]').forEach(el=>{
+    const expr=el.getAttribute('data-latex');
+    if(!expr) return;
+    try{
+      katex.render(expr,el,{displayMode:true,throwOnError:false,trust:true});
+    }catch(e){
+      el.innerHTML=`<span class="latex-raw">∑ ${expr}</span>`;
+    }
+  });
 }
 
 async function crosspostTumblr(){const token=prompt('Tumblr OAuth token:');if(!token)return;const r=await fetch('https://api.tumblr.com/v2/blog/sociallynu.tumblr.com/posts',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})});alert(r.ok?'posted!':'failed');}

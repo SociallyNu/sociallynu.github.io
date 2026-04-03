@@ -92,10 +92,19 @@ async function init(){
 
   if(window.Prism)Prism.highlightAllUnder(document.getElementById('postContent'));
   // render latex blocks
-  document.querySelectorAll('#postContent .latex-block').forEach(el=>{
-    const expr=el.getAttribute('data-latex');
-    if(expr&&window.katex){try{katex.render(expr,el,{displayMode:true,throwOnError:false});}catch(e){}}
-  });
+  // render all latex blocks from data-latex attribute
+  if(window.katex){
+    document.querySelectorAll('#postContent .latex-block[data-latex]').forEach(el=>{
+      const expr=el.getAttribute('data-latex');
+      if(!expr)return;
+      try{katex.render(expr,el,{displayMode:true,throwOnError:false,trust:true});}
+      catch(e){el.innerHTML=`<span style="font-family:monospace;color:#d4c5fa;font-size:12px;">∑ ${expr}</span>`;}
+    });
+    // also render any katex-src spans (legacy)
+    document.querySelectorAll('#postContent .katex-src').forEach(el=>{
+      try{katex.render(el.textContent,el,{displayMode:el.classList.contains('katex-display'),throwOnError:false});}catch(e){}
+    });
+  }
   document.querySelectorAll('.katex-src').forEach(el=>{try{katex.render(el.textContent,el,{displayMode:el.classList.contains('katex-display'),throwOnError:false});}catch(e){}});
 
   buildTOC();
