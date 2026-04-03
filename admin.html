@@ -133,7 +133,7 @@ body{overflow:hidden;}
               · <span style="color:var(--purple);">ADMIN_PASSWORD</span><br>
               · <span style="color:var(--purple);">GITHUB_REPO</span><br><br>
               <strong style="color:var(--t2);">admin.html</strong>:<br>
-              · <span style="color:var(--purple);">sociallynu.tumblr.com</span>
+              · <span style="color:var(--purple);">YOUR_BLOG.tumblr.com</span>
             </div>
           </div>
           <div style="border-top:1px solid var(--border);padding-top:14px;">
@@ -569,7 +569,7 @@ function tblSplit(){
   }
 }
 
-async function crosspostTumblr(){const token=prompt('Tumblr OAuth token:');if(!token)return;const r=await fetch('https://api.tumblr.com/v2/blog/sociallynu.tumblr.com/posts',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})});alert(r.ok?'posted!':'failed');}
+async function crosspostTumblr(){const token=prompt('Tumblr OAuth token:');if(!token)return;const r=await fetch('https://api.tumblr.com/v2/blog/YOUR_BLOG.tumblr.com/posts',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})});alert(r.ok?'posted!':'failed');}
 
 setInterval(()=>{if(editingId&&editor.innerText.trim())saveDraft();},120000);
 if(isAdmin())adminInit();

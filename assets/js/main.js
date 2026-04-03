@@ -1,5 +1,5 @@
 // ── CONFIG (CHANGE BEFORE PUSHING) ───────────────────────────
-const GITHUB_REPO = 'SociallyNu/sociallynu.github.io';
+const GITHUB_REPO = 'YOURUSERNAME/sociallynu.github.io';
 const ADMIN_PASSWORD = 'changethis';
 const GITHUB_TOKEN_KEY = 'snu_gh_token';
 const PFP_KEY = 'snu_pfp';
@@ -235,6 +235,36 @@ async function renderStreakCalendar(posts){
 }
 
 // ── TICKERS (hero) ────────────────────────────────────────────
+
+// ── CONTENT SANITIZER ─────────────────────────────────────────
+// Strips bad inline styles from editor content before saving
+// keeps structure (tags) but removes color/font/margin overrides
+// that would clash with post-content CSS on the public site
+function cleanContent(html){
+  const d=document.createElement('div');
+  d.innerHTML=html;
+  // remove inline style from everything EXCEPT pre/code/specific elements
+  d.querySelectorAll('*').forEach(el=>{
+    const tag=el.tagName.toLowerCase();
+    // keep style on resizable-media, latex-block, ghost-inline
+    if(el.classList.contains('resizable-media')||el.classList.contains('latex-block')||el.classList.contains('ghost-inline')||el.classList.contains('code-lang-badge'))return;
+    // for pre/code keep background but remove color overrides
+    if(tag==='pre'||tag==='code'){el.removeAttribute('style');return;}
+    // for everything else, strip inline styles
+    el.removeAttribute('style');
+  });
+  // convert div-only paragraphs (Chrome contenteditable adds divs on Enter)
+  // replace bare divs that aren't special with p tags
+  d.querySelectorAll('div').forEach(div=>{
+    if(div.classList.length===0&&!div.closest('table')&&!div.closest('pre')){
+      const p=document.createElement('p');
+      p.innerHTML=div.innerHTML;
+      div.replaceWith(p);
+    }
+  });
+  return d.innerHTML;
+}
+
 const TICKER_DATA=[
   {text:'error 404: consistency not found',mood:'skull'},
   {text:'gaslighting myself into understanding',mood:'uglycrying'},
