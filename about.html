@@ -133,7 +133,7 @@ async function init(){
     </div>`).join('');
 
   // streak
-  document.getElementById('streakRoot').innerHTML = renderStreakCalendar(posts);
+  document.getElementById('streakRoot').innerHTML = await renderStreakCalendar(posts);
 
   // stats
   const cats=['systems','dsa','rant','daily-log','milestone'];

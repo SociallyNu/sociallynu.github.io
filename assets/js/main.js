@@ -1,5 +1,5 @@
 // ── CONFIG (CHANGE BEFORE PUSHING) ───────────────────────────
-const GITHUB_REPO = 'YOURUSERNAME/sociallynu.github.io';
+const GITHUB_REPO = 'SociallyNu/sociallynu.github.io';
 const ADMIN_PASSWORD = 'changethis';
 const GITHUB_TOKEN_KEY = 'snu_gh_token';
 const PFP_KEY = 'snu_pfp';
@@ -75,27 +75,33 @@ async function fetchAbout(){try{const r=await fetch('/posts/about.json?v='+Date.
 
 // ── PFP ───────────────────────────────────────────────────────
 const PFP_PATH='images/pfp.jpg';
-const PFP_REPO_URL=`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${PFP_PATH}`;
+// github pages serves files at the site URL — works for EVERYONE not just you
+function getPfpUrl(){
+  const user=GITHUB_REPO.split('/')[0];
+  const repo=GITHUB_REPO.split('/')[1];
+  // if repo is username.github.io, site is at https://username.github.io
+  // otherwise https://username.github.io/reponame
+  const isUserSite=repo===`${user}.github.io`;
+  return isUserSite?`https://${repo}/${PFP_PATH}`:`https://${user}.github.io/${repo}/${PFP_PATH}`;
+}
 async function applyPfp(els){
-  // try repo first (works for everyone), fallback to localStorage cache
+  if(!els||!els.length)return;
+  // try github pages URL first (everyone can see this)
+  const pageUrl=`${getPfpUrl()}?v=${Math.floor(Date.now()/60000)}`; // cache bust per minute
   const cached=localStorage.getItem(PFP_KEY)||'';
-  const url=`${PFP_REPO_URL}?v=${Date.now()}`;
   let finalUrl='';
   try{
-    const r=await fetch(url,{method:'HEAD'});
-    if(r.ok)finalUrl=url;
-    else if(cached)finalUrl=cached;
-  }catch(e){if(cached)finalUrl=cached;}
+    const r=await fetch(pageUrl,{method:'HEAD',cache:'no-store'});
+    finalUrl=r.ok?pageUrl:(cached||'');
+  }catch(e){finalUrl=cached||'';}
   els.forEach(el=>{
     if(!el)return;
-    if(finalUrl){el.innerHTML=`<img src="${finalUrl}" alt="pfp" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;el.style.fontSize='0';}
+    if(finalUrl){el.innerHTML=`<img src="${finalUrl}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;el.style.fontSize='0';}
     else{el.innerHTML='🐱';el.style.fontSize='';}
   });
 }
 async function uploadPfp(dataUrl){
-  // save to localStorage as cache
   try{localStorage.setItem(PFP_KEY,dataUrl);}catch(e){}
-  // save to github repo so everyone sees it
   const base64=dataUrl.split(',')[1];
   return await githubSave(PFP_PATH,{__raw:true,data:base64},'update profile picture');
 }
@@ -232,49 +238,65 @@ async function renderStreakCalendar(posts){
 const TICKER_DATA=[
   {text:'error 404: consistency not found',mood:'skull'},
   {text:'gaslighting myself into understanding',mood:'uglycrying'},
-  {text:'ctrl + z but for life pls',mood:'frustrated'},
+  {text:"ctrl + z but for life pls",mood:'frustrated'},
   {text:'this will make sense eventually (threat)',mood:'smirking'},
-  {text:'trust the process (i don\'t)',mood:'exhausted'},
+  {text:"trust the process (i don't)",mood:'exhausted'},
   {text:'skill issue (fixing)',mood:'crash'},
   {text:'one concept away from clarity',mood:'trace'},
   {text:'sudo make me consistent',mood:'loop'},
+  {text:"if it works don't ask me why",mood:'bug'},
+  {text:'patching myself daily',mood:'oops'},
+  {text:'i push to main and pray',mood:'gremlin'},
+  {text:'currently installing discipline',mood:'null'},
+  {text:'downloading competence…',mood:'lag'},
+  {text:'have you tried turning me off and on again',mood:'glitch'},
+  {text:'patching myself daily v2',mood:'blink'},
 ];
-// pick 3 for tickers, alternate which ones show
-const TICKER_SETS=[[0,3,6],[1,4,7],[2,5,0]];
+
+// Alternating batches: show 3 rows, each time page loads pick 3 different quotes per row
+// so every refresh shows different combo from the pool
 function initTickers(containerId){
   const zone=document.getElementById(containerId);
-  if(!zone) return;
-  // pick 3 quotes
-  const picks=[TICKER_DATA[0],TICKER_DATA[2],TICKER_DATA[4]];
-  const speeds=[38,52,44]; // seconds per loop — different speeds
+  if(!zone)return;
   zone.innerHTML='';
-  picks.forEach((item,i)=>{
-    const row=document.createElement('div');
-    row.className='ticker-row';
-    // build repeating content: quote + ghost, duplicated for seamless loop
-    const ghost=getMoodGhost(item.mood,18,20);
-    const content=`<span class="ticker-item">${item.text}&nbsp;&nbsp;${ghost}</span><span class="ticker-sep"></span>`;
+  const pool=[...TICKER_DATA];
+  // shuffle pool
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  // 3 rows, each gets 5 quotes (from shuffled pool, wrapping if needed)
+  const speeds=[42,58,48];
+  for(let row=0;row<3;row++){
+    const rowQuotes=[];
+    for(let q=0;q<5;q++){rowQuotes.push(pool[(row*5+q)%pool.length]);}
+    const rowEl=document.createElement('div');
+    rowEl.className='ticker-row';
     const track=document.createElement('div');
     track.className='ticker-track';
-    // repeat 4 times for seamless
-    track.innerHTML=content.repeat(4);
-    row.appendChild(track);
-    zone.appendChild(row);
-    // animate
-    const dur=speeds[i];
-    const totalW=track.scrollWidth/2; // half since doubled
-    let x=0,last=null;
-    function animate(ts){
-      if(last===null)last=ts;
-      const dt=(ts-last)/1000;last=ts;
-      x-=(totalW/dur)*dt;
-      if(x<=-totalW)x=0;
-      track.style.transform=`translateX(${x}px)`;
-      requestAnimationFrame(animate);
-    }
-    requestAnimationFrame(animate);
-  });
+    let content='';
+    rowQuotes.forEach(item=>{
+      const ghost=getMoodGhost(item.mood,18,20);
+      content+=`<span class="ticker-item">${item.text} ${ghost}</span><span class="ticker-sep"></span>`;
+    });
+    track.innerHTML=content.repeat(3);
+    rowEl.appendChild(track);
+    zone.appendChild(rowEl);
+    // start animation after layout
+    setTimeout(()=>{
+      const totalW=track.scrollWidth/3;
+      let x=0,last=null;
+      const spd=speeds[row];
+      function tick(ts){
+        if(last===null)last=ts;
+        x-=(totalW/spd)*((ts-last)/1000);
+        if(x<=-totalW)x=0;
+        track.style.transform=`translateX(${x}px)`;
+        last=ts;
+        requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    },100);
+  }
 }
+
 
 // ── STARS ─────────────────────────────────────────────────────
 function initStars(){
@@ -306,7 +328,7 @@ function getToken(){return localStorage.getItem(GITHUB_TOKEN_KEY)||'';}
 
 // ── GITHUB API ────────────────────────────────────────────────
 async function githubSave(path,content,message='update'){
-  const token=getToken();
+  const token=localStorage.getItem(GITHUB_TOKEN_KEY)||''; // always fresh
   if(!token){alert('GitHub token not set. Go to Admin → Settings tab and enter your token.');return false;}
   let encoded;
   if(content&&content.__raw){encoded=content.data;}

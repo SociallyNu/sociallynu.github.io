@@ -133,7 +133,7 @@ body{overflow:hidden;}
               · <span style="color:var(--purple);">ADMIN_PASSWORD</span><br>
               · <span style="color:var(--purple);">GITHUB_REPO</span><br><br>
               <strong style="color:var(--t2);">admin.html</strong>:<br>
-              · <span style="color:var(--purple);">YOUR_BLOG.tumblr.com</span>
+              · <span style="color:var(--purple);">sociallynu.tumblr.com</span>
             </div>
           </div>
           <div style="border-top:1px solid var(--border);padding-top:14px;">
@@ -218,6 +218,8 @@ body{overflow:hidden;}
         <button class="tbl-btn" onclick="tblCol(false)">+col←</button>
         <button class="tbl-btn danger" onclick="tblDelRow()">−row</button>
         <button class="tbl-btn danger" onclick="tblDelCol()">−col</button>
+        <button class="tbl-btn" onclick="tblMerge()" title="select cells with mouse then merge">merge</button>
+        <button class="tbl-btn" onclick="tblSplit()">split</button>
         <button class="tbl-btn danger" onclick="tblDelTable()">✕tbl</button>
       </div>
 
@@ -269,10 +271,20 @@ async function handlePfpUpload(e){
       el.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
       el.style.fontSize='0';
     });
-    // save to github so everyone sees it
-    setStatus('uploading pfp...','var(--t3)');
+    if(!getToken()){
+      // no token - show message but save locally anyway
+      try{localStorage.setItem(PFP_KEY,dataUrl);}catch(ex){}
+      alert('pfp saved locally on this browser only.\n\nTo make it visible to EVERYONE:\n1. Set your GitHub token in admin → cfg tab\n2. Upload the pfp again');
+      return;
+    }
+    setStatus('uploading pfp to repo...','var(--t3)');
     const ok=await uploadPfp(dataUrl);
-    setStatus(ok?'pfp saved ✓ (visible to all in ~2min)':'pfp upload failed — check token','var(--green)');
+    if(ok){
+      setStatus('pfp saved ✓ visible to everyone in ~2 min','var(--green)');
+    } else {
+      setStatus('pfp upload failed — check GitHub token has repo scope','var(--pink)');
+      try{localStorage.setItem(PFP_KEY,dataUrl);}catch(ex){}
+    }
   };
   reader.readAsDataURL(file);e.target.value='';
 }
@@ -300,7 +312,21 @@ async function adminInit(){
   renderTagManager('tagManagerRoot',async()=>{allPosts=await fetchPosts();renderSidebarPosts();const tags2=await fetchTags();const cs=document.getElementById('catSel');cs.innerHTML=tags2.filter(t=>t.isCategory).map(t=>`<option value="${t.id}">#${t.label}</option>`).join('');});
 }
 
-function updateToken(){const v=document.getElementById('tokenUpdate').value.trim();if(v){localStorage.setItem(GITHUB_TOKEN_KEY,v);document.getElementById('tokenStatus').textContent='✓ saved';document.getElementById('tokenStatus').style.color='var(--green)';}}
+function updateToken(){
+  const v=document.getElementById('tokenUpdate').value.trim();
+  if(!v){document.getElementById('tokenStatus').textContent='⚠ enter a token first';return;}
+  localStorage.setItem(GITHUB_TOKEN_KEY,v);
+  // verify it works
+  fetch(`https://api.github.com/repos/${GITHUB_REPO}`,{headers:{Authorization:`Bearer ${v}`}})
+    .then(r=>{
+      const st=document.getElementById('tokenStatus');
+      if(r.ok){st.textContent='✓ token valid & saved';st.style.color='var(--green)';}
+      else{st.textContent=`✗ token invalid (status ${r.status}) — check repo scope`;st.style.color='var(--pink)';}
+    }).catch(()=>{
+      document.getElementById('tokenStatus').textContent='✓ saved (could not verify — check connection)';
+      document.getElementById('tokenStatus').style.color='var(--yellow)';
+    });
+}
 function switchSb(tab,el){document.querySelectorAll('.adm-stab').forEach(t=>t.classList.remove('active'));el.classList.add('active');['postsPanel','tagsPanel','settingsPanel'].forEach(id=>document.getElementById(id).classList.remove('show'));document.getElementById(tab+'Panel').classList.add('show');}
 
 function renderSidebarPosts(filter=''){
@@ -474,13 +500,76 @@ function toggleGhostPicker(e){
 function insertGhost(mood){document.getElementById('ghostPicker').classList.remove('show');restoreSelection();const span=document.createElement('span');span.className='ghost-inline';span.innerHTML=getMoodGhost(mood,36,42);insertNode(span);editor.focus();}
 document.addEventListener('click',e=>{if(!e.target.closest('#ghostPicker')&&!e.target.closest('#ghostPickerBtn'))document.getElementById('ghostPicker')?.classList.remove('show');});
 
-function switchTab(tab,el){document.querySelectorAll('.ed-tab').forEach(t=>t.classList.remove('active'));if(el)el.classList.add('active');editor.style.display=tab==='write'?'block':'none';document.getElementById('previewPane').classList.toggle('show',tab==='preview');document.getElementById('htmlPane').classList.toggle('show',tab==='html');if(tab==='preview'){document.getElementById('previewPane').innerHTML=editor.innerHTML;if(window.Prism)Prism.highlightAllUnder(document.getElementById('previewPane'));}if(tab==='html')document.getElementById('htmlPane').textContent=editor.innerHTML;}
+function switchTab(tab,el){
+  document.querySelectorAll('.ed-tab').forEach(t=>t.classList.remove('active'));
+  if(el)el.classList.add('active');
+  editor.style.display=tab==='write'?'block':'none';
+  document.getElementById('previewPane').classList.toggle('show',tab==='preview');
+  document.getElementById('htmlPane').classList.toggle('show',tab==='html');
+  if(tab==='preview'){
+    const pane=document.getElementById('previewPane');
+    pane.innerHTML=editor.innerHTML;
+    if(window.Prism)Prism.highlightAllUnder(pane);
+    // render latex blocks
+    pane.querySelectorAll('.latex-block').forEach(el=>{
+      const expr=el.getAttribute('data-latex');
+      if(expr&&window.katex){try{katex.render(expr,el,{displayMode:true,throwOnError:false});}catch(e){}}
+    });
+  }
+  if(tab==='html')document.getElementById('htmlPane').textContent=editor.innerHTML;
+}
 
 function updateStats(){const txt=editor.innerText.trim();const w=txt?txt.split(/\s+/).length:0;document.getElementById('wc').textContent=w;document.getElementById('rt').textContent=`~${Math.max(1,Math.round(w/200))} min`;setStatus('unsaved','var(--yellow)');}
 
 function insertNode(node){editor.focus();const sel=window.getSelection();if(sel.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(node);r.setStartAfter(node);r.collapse(true);sel.removeAllRanges();sel.addRange(r);}else editor.appendChild(node);updateStats();}
 
-async function crosspostTumblr(){const token=prompt('Tumblr OAuth token:');if(!token)return;const r=await fetch('https://api.tumblr.com/v2/blog/YOUR_BLOG.tumblr.com/posts',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})});alert(r.ok?'posted!':'failed');}
+function tblMerge(){
+  // merge selected cells by setting colspan on first selected cell
+  const sel=window.getSelection();
+  if(!sel.rangeCount){alert('Select cells by clicking and dragging across them first');return;}
+  const range=sel.getRangeAt(0);
+  const tbl=getAT();if(!tbl){alert('cursor must be in a table');return;}
+  // find all TD/TH nodes in selection
+  const cells=[];
+  tbl.querySelectorAll('td,th').forEach(cell=>{if(sel.containsNode(cell,true))cells.push(cell);});
+  if(cells.length<2){alert('select at least 2 cells to merge');return;}
+  // get colspan span needed
+  const firstRow=cells[0].closest('tr');
+  const sameRow=cells.every(c=>c.closest('tr')===firstRow);
+  if(sameRow){
+    const span=cells.length;
+    const text=cells.map(c=>c.textContent).filter(t=>t&&t!='cell').join(' / ');
+    cells[0].setAttribute('colspan',span);
+    cells[0].textContent=text||cells[0].textContent;
+    cells.slice(1).forEach(c=>c.remove());
+  } else {
+    // vertical merge (rowspan)
+    const col=cells[0].cellIndex;
+    const span=cells.length;
+    const text=cells.map(c=>c.textContent).filter(t=>t&&t!='cell').join(' / ');
+    cells[0].setAttribute('rowspan',span);
+    cells[0].textContent=text||cells[0].textContent;
+    cells.slice(1).forEach(c=>c.remove());
+  }
+}
+
+function tblSplit(){
+  const c=getAC();if(!c){alert('click on a merged cell first');return;}
+  const colspan=parseInt(c.getAttribute('colspan')||1);
+  const rowspan=parseInt(c.getAttribute('rowspan')||1);
+  if(colspan<=1&&rowspan<=1){alert('this cell is not merged');return;}
+  const row=c.closest('tr');
+  const origText=c.textContent;
+  c.removeAttribute('colspan');c.removeAttribute('rowspan');
+  // add back missing cells
+  for(let i=1;i<colspan;i++){
+    const td=document.createElement(c.tagName.toLowerCase());
+    td.contentEditable='true';td.textContent='cell';
+    c.after(td);
+  }
+}
+
+async function crosspostTumblr(){const token=prompt('Tumblr OAuth token:');if(!token)return;const r=await fetch('https://api.tumblr.com/v2/blog/sociallynu.tumblr.com/posts',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})});alert(r.ok?'posted!':'failed');}
 
 setInterval(()=>{if(editingId&&editor.innerText.trim())saveDraft();},120000);
 if(isAdmin())adminInit();

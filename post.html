@@ -91,6 +91,11 @@ async function init(){
   });
 
   if(window.Prism)Prism.highlightAllUnder(document.getElementById('postContent'));
+  // render latex blocks
+  document.querySelectorAll('#postContent .latex-block').forEach(el=>{
+    const expr=el.getAttribute('data-latex');
+    if(expr&&window.katex){try{katex.render(expr,el,{displayMode:true,throwOnError:false});}catch(e){}}
+  });
   document.querySelectorAll('.katex-src').forEach(el=>{try{katex.render(el.textContent,el,{displayMode:el.classList.contains('katex-display'),throwOnError:false});}catch(e){}});
 
   buildTOC();
