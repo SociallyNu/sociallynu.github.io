@@ -1,5 +1,5 @@
 // ── CONFIG (CHANGE BEFORE PUSHING) ───────────────────────────
-const GITHUB_REPO = 'SciallyNu/sociallynu.github.io';
+const GITHUB_REPO = 'SociallyNu/sociallynu.github.io';
 const ADMIN_PASSWORD = 'changethis';
 const GITHUB_TOKEN_KEY = 'snu_gh_token';
 const PFP_KEY = 'snu_pfp';
