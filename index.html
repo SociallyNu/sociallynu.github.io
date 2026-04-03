@@ -20,8 +20,9 @@
           <div class="hero-vol">vol. 1</div>
           <div class="hero-h1">learning arc or<br>villain origin<br>story.</div>
         </div>
-        <div class="hero-nuon float" id="heroNuon"></div>
+        <div class="hero-nuon" id="heroNuon" style="animation:float 3.2s ease-in-out infinite;display:flex;align-items:center;justify-content:center;min-width:160px;"></div>
       </div>
+      <div style="height:1px;background:var(--border);margin-bottom:0;"></div>
       <div class="ticker-zone" id="tickerZone"></div>
     </div>
     <div id="pinned-root"></div>
@@ -45,7 +46,7 @@ async function init(){
 
   document.getElementById('sidebar-root').innerHTML=await renderSidebar(posts,about.moods);
   initMobileSidebar();
-  applyPfp([document.getElementById('pfpEl')]);
+  applyPfp([document.getElementById('pfpEl')]);  // async, fires in background
 
   // hero nuon
   document.getElementById('heroNuon').innerHTML=G.base(120,138);

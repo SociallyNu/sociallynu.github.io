@@ -1,5 +1,5 @@
 // ── CONFIG (CHANGE BEFORE PUSHING) ───────────────────────────
-const GITHUB_REPO = 'SociallyNu/sociallynu.github.io';
+const GITHUB_REPO = 'YOURUSERNAME/sociallynu.github.io';
 const ADMIN_PASSWORD = 'changethis';
 const GITHUB_TOKEN_KEY = 'snu_gh_token';
 const PFP_KEY = 'snu_pfp';
@@ -74,9 +74,31 @@ async function fetchPost(file){const r=await fetch(`/${file}?v=`+Date.now());ret
 async function fetchAbout(){try{const r=await fetch('/posts/about.json?v='+Date.now());if(r.ok)return r.json();}catch(e){}return{prose:'',grinding:[],reading:[],moods:['exhausted','uglycrying'],updated:''};}
 
 // ── PFP ───────────────────────────────────────────────────────
-function getPfp(){return localStorage.getItem(PFP_KEY)||'';}
-function setPfp(dataUrl){localStorage.setItem(PFP_KEY,dataUrl);}
-function applyPfp(els){const p=getPfp();els.forEach(el=>{if(!el)return;if(p){el.innerHTML=`<img src="${p}" alt="pfp"/>`;el.style.fontSize='0';}else{el.innerHTML='🐱';el.style.fontSize='';}});}
+const PFP_PATH='images/pfp.jpg';
+const PFP_REPO_URL=`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${PFP_PATH}`;
+async function applyPfp(els){
+  // try repo first (works for everyone), fallback to localStorage cache
+  const cached=localStorage.getItem(PFP_KEY)||'';
+  const url=`${PFP_REPO_URL}?v=${Date.now()}`;
+  let finalUrl='';
+  try{
+    const r=await fetch(url,{method:'HEAD'});
+    if(r.ok)finalUrl=url;
+    else if(cached)finalUrl=cached;
+  }catch(e){if(cached)finalUrl=cached;}
+  els.forEach(el=>{
+    if(!el)return;
+    if(finalUrl){el.innerHTML=`<img src="${finalUrl}" alt="pfp" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;el.style.fontSize='0';}
+    else{el.innerHTML='🐱';el.style.fontSize='';}
+  });
+}
+async function uploadPfp(dataUrl){
+  // save to localStorage as cache
+  try{localStorage.setItem(PFP_KEY,dataUrl);}catch(e){}
+  // save to github repo so everyone sees it
+  const base64=dataUrl.split(',')[1];
+  return await githubSave(PFP_PATH,{__raw:true,data:base64},'update profile picture');
+}
 
 // ── NAV ───────────────────────────────────────────────────────
 function renderNav(active=''){

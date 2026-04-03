@@ -22,7 +22,7 @@
     <div id="aboutLeft">
 
       <div style="display:flex;gap:16px;align-items:flex-start;margin-bottom:20px;">
-        <div class="pfp" style="flex-shrink:0;width:64px;height:64px;font-size:30px;">🐱</div>
+        <div class="pfp" id="aboutPfpEl" style="flex-shrink:0;width:64px;height:64px;font-size:30px;">🐱</div>
         <div>
           <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;margin-bottom:4px;font-weight:700;">∵ sociallynu</div>
           <div style="font-family:var(--font-serif);font-style:italic;font-size:18px;color:var(--t1);line-height:1.25;margin-bottom:3px;">learning arc or villain origin story.</div>
@@ -160,7 +160,8 @@ async function init(){
 
   if(isAdmin()) document.getElementById('editNowLink').style.display='inline';
 
-  initStars();
+  applyPfp([document.getElementById("pfpEl"),document.getElementById("aboutPfpEl")].filter(Boolean));
+initStars();
 }
 init();
 </script>

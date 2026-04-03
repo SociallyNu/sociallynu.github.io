@@ -133,7 +133,7 @@ body{overflow:hidden;}
               · <span style="color:var(--purple);">ADMIN_PASSWORD</span><br>
               · <span style="color:var(--purple);">GITHUB_REPO</span><br><br>
               <strong style="color:var(--t2);">admin.html</strong>:<br>
-              · <span style="color:var(--purple);">sociallyNu.tumblr.com</span>
+              · <span style="color:var(--purple);">YOUR_BLOG.tumblr.com</span>
             </div>
           </div>
           <div style="border-top:1px solid var(--border);padding-top:14px;">
@@ -199,6 +199,11 @@ body{overflow:hidden;}
           <button class="tb-btn" onclick="toggleGhostPicker(event)" id="ghostPickerBtn">👻</button>
         </div>
         <div class="tb-grp">
+          <span class="tb-lbl">color</span>
+          <button class="tb-btn" onclick="toggleColorPicker(event)" id="colorPickerBtn" style="display:flex;align-items:center;gap:4px;">A <span id="colorDot" style="width:8px;height:8px;border-radius:50%;background:var(--purple);display:inline-block;"></span></button>
+          <button class="tb-btn" onclick="removeColor()" title="remove color" style="color:var(--t4);">A</button>
+        </div>
+        <div class="tb-grp">
           <span class="tb-lbl">post</span>
           <button class="tb-btn" onclick="document.getElementById('pinnedCheck').checked=!document.getElementById('pinnedCheck').checked">📌</button>
           <button class="tb-btn" onclick="crosspostTumblr()">tumblr↗</button>
@@ -253,10 +258,22 @@ function doLogin(){
 }
 if(isAdmin()){document.getElementById('loginScreen').style.display='none';document.getElementById('adminUI').style.display='grid';}
 
-function handlePfpUpload(e){
+async function handlePfpUpload(e){
   const file=e.target.files[0];if(!file)return;
   const reader=new FileReader();
-  reader.onload=ev=>{setPfp(ev.target.result);applyPfp([document.getElementById('loginPfp'),document.getElementById('settingsPfp')]);};
+  reader.onload=async ev=>{
+    const dataUrl=ev.target.result;
+    // show immediately in UI
+    [document.getElementById('loginPfp'),document.getElementById('settingsPfp')].forEach(el=>{
+      if(!el)return;
+      el.innerHTML=`<img src="${dataUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`;
+      el.style.fontSize='0';
+    });
+    // save to github so everyone sees it
+    setStatus('uploading pfp...','var(--t3)');
+    const ok=await uploadPfp(dataUrl);
+    setStatus(ok?'pfp saved ✓ (visible to all in ~2min)':'pfp upload failed — check token','var(--green)');
+  };
   reader.readAsDataURL(file);e.target.value='';
 }
 
@@ -371,8 +388,11 @@ async function handleMedia(e,type){
     const url=ok?`https://raw.githubusercontent.com/${GITHUB_REPO}/main/${fn}`:ev.target.result;
     const wrap=document.createElement('div');wrap.className='resizable-media';wrap.style.width='100%';
     if(type==='vid'){const v=document.createElement('video');v.src=url;v.controls=true;wrap.appendChild(v);}
-    else{const img=document.createElement('img');img.src=url;wrap.appendChild(img);}
-    insertNode(wrap);setStatus(ok?'uploaded ✓':'local preview','var(--green)');
+    else{const img=document.createElement('img');img.src=url;img.style.width='100%';img.style.display='block';wrap.appendChild(img);}
+    insertNode(wrap);makeResizable(wrap);
+    // insert paragraph after for cursor
+    const p=document.createElement('p');p.innerHTML='<br>';wrap.after(p);
+    setStatus(ok?'uploaded ✓ (visible to all after github syncs)':'local preview only','var(--green)');
   };
   reader.readAsDataURL(file);e.target.value='';
 }
@@ -403,7 +423,13 @@ function insertCode(){
   const badge=document.createElement('span');badge.className='code-lang-badge';badge.textContent=lang;
   pre.appendChild(code);pre.appendChild(badge);insertNode(pre);
 }
-function insertQuote(){const bq=document.createElement('blockquote');bq.innerHTML='<p>quote here</p>';insertNode(bq);}
+function insertQuote(){
+  const bq=document.createElement('blockquote');bq.innerHTML='<p>quote here</p>';
+  insertNode(bq);
+  const p=document.createElement('p');p.innerHTML='<br>';bq.after(p);
+  const r=document.createRange();r.setStart(p,0);r.collapse(true);
+  const s=window.getSelection();s.removeAllRanges();s.addRange(r);
+}
 function insertLatex(){const expr=prompt('LaTeX:','E = mc^2')||'E = mc^2';const span=document.createElement('span');span.className='katex-src katex-display';span.textContent=expr;insertNode(span);}
 
 function insertTable(){
@@ -454,10 +480,104 @@ function updateStats(){const txt=editor.innerText.trim();const w=txt?txt.split(/
 
 function insertNode(node){editor.focus();const sel=window.getSelection();if(sel.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(node);r.setStartAfter(node);r.collapse(true);sel.removeAllRanges();sel.addRange(r);}else editor.appendChild(node);updateStats();}
 
-async function crosspostTumblr(){const token=prompt('Tumblr OAuth token:');if(!token)return;const r=await fetch('https://api.tumblr.com/v2/blog/sociallynu.tumblr.com/posts',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})});alert(r.ok?'posted!':'failed');}
+async function crosspostTumblr(){const token=prompt('Tumblr OAuth token:');if(!token)return;const r=await fetch('https://api.tumblr.com/v2/blog/YOUR_BLOG.tumblr.com/posts',{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({type:'text',title:document.getElementById('titleInput').value,body:editor.innerHTML,tags:[document.getElementById('catSel').value]})});alert(r.ok?'posted!':'failed');}
 
 setInterval(()=>{if(editingId&&editor.innerText.trim())saveDraft();},120000);
 if(isAdmin())adminInit();
+
+// ── COLOR PICKER ──────────────────────────────────────────────
+const SITE_COLORS=[
+  {label:'purple',val:'#a78bfa'},{label:'pink',val:'#f472b6'},
+  {label:'blue',val:'#60a5fa'},{label:'green',val:'#34d399'},
+  {label:'yellow',val:'#fbbf24'},{label:'lavender',val:'#b8a8d4'},
+  {label:'rose',val:'#c9a0a0'},{label:'amber',val:'#c4a97d'},
+  {label:'sage',val:'#a0b4a0'},{label:'teal',val:'#a0c4c4'},
+  {label:'dim',val:'#7880aa'},{label:'muted',val:'#455070'},
+];
+let savedRangeColor=null;
+function toggleColorPicker(e){
+  e.stopPropagation();
+  const sel=window.getSelection();
+  if(sel.rangeCount)savedRangeColor=sel.getRangeAt(0).cloneRange();
+  let picker=document.getElementById('colorPickerPopup');
+  if(!picker){
+    picker=document.createElement('div');
+    picker.id='colorPickerPopup';
+    picker.style.cssText='position:fixed;background:#0d0f20;border:1px solid var(--purple-dark);border-radius:10px;padding:10px;display:none;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.85);width:200px;';
+    picker.innerHTML='<div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px;">'+SITE_COLORS.map(c=>`<div style="width:24px;height:24px;border-radius:4px;background:${c.val};cursor:pointer;border:2px solid transparent;" title="${c.label}" onclick="applyColor('${c.val}')"></div>`).join('')+'</div><div style="font-family:var(--font-mono);font-size:8px;color:var(--t4);margin-top:8px;">click a color to apply to selected text</div>';
+    document.body.appendChild(picker);
+    document.addEventListener('click',ev=>{if(!ev.target.closest('#colorPickerPopup')&&!ev.target.closest('#colorPickerBtn'))picker.style.display='none';});
+  }
+  const showing=picker.style.display!=='none';
+  picker.style.display=showing?'none':'block';
+  if(!showing){const rect=document.getElementById('colorPickerBtn').getBoundingClientRect();picker.style.top=(rect.bottom+4)+'px';picker.style.left=Math.max(4,rect.left-80)+'px';}
+}
+function applyColor(color){
+  document.getElementById('colorPickerPopup').style.display='none';
+  document.getElementById('colorDot').style.background=color;
+  if(!savedRangeColor){editor.focus();document.execCommand('foreColor',false,color);return;}
+  const sel=window.getSelection();sel.removeAllRanges();sel.addRange(savedRangeColor);
+  document.execCommand('foreColor',false,color);
+  savedRangeColor=null;editor.focus();
+}
+function removeColor(){
+  editor.focus();
+  document.execCommand('foreColor',false,'#b0aad8');// reset to --t2
+}
+
+// ── DRAG RESIZE FOR MEDIA ─────────────────────────────────────
+function makeResizable(wrap){
+  const handle=document.createElement('div');
+  handle.style.cssText='position:absolute;bottom:4px;right:4px;width:14px;height:14px;background:var(--purple-dark);border-radius:2px;cursor:se-resize;z-index:10;opacity:0.8;';
+  handle.title='drag to resize';
+  wrap.style.position='relative';
+  wrap.style.display='inline-block';
+  wrap.style.maxWidth='100%';
+  wrap.appendChild(handle);
+  let startX,startW,startH;
+  handle.addEventListener('mousedown',e=>{
+    e.preventDefault();e.stopPropagation();
+    startX=e.clientX;startW=wrap.offsetWidth;startH=wrap.offsetHeight;
+    function onMove(ev){
+      const dx=ev.clientX-startX;
+      const newW=Math.max(80,startW+dx);
+      wrap.style.width=newW+'px';
+    }
+    function onUp(){document.removeEventListener('mousemove',onMove);document.removeEventListener('mouseup',onUp);}
+    document.addEventListener('mousemove',onMove);
+    document.addEventListener('mouseup',onUp);
+  });
+}
+
+// ── CURSOR ESCAPE FROM BLOCKS ─────────────────────────────────
+editor.addEventListener('keydown',function(e){
+  if(e.key==='Enter'){
+    const sel=window.getSelection();
+    if(!sel.rangeCount)return;
+    let node=sel.getRangeAt(0).commonAncestorContainer;
+    // walk up to find block element
+    while(node&&node!==editor){
+      if(node.tagName==='PRE'||node.tagName==='BLOCKQUOTE'||node.tagName==='TABLE'){
+        // check if we're at the END of the block
+        const range=sel.getRangeAt(0);
+        const endRange=document.createRange();
+        endRange.selectNodeContents(node);
+        endRange.collapse(false);
+        const isAtEnd=range.compareBoundaryPoints(Range.END_TO_END,endRange)>=0;
+        if(isAtEnd){
+          e.preventDefault();
+          // insert a <p> after the block
+          const p=document.createElement('p');p.innerHTML='<br>';
+          node.after(p);
+          const r=document.createRange();r.setStart(p,0);r.collapse(true);
+          sel.removeAllRanges();sel.addRange(r);
+        }
+        break;
+      }
+      node=node.parentNode;
+    }
+  }
+});
 </script>
 </body>
 </html>
