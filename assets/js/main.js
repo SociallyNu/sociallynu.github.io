@@ -288,43 +288,43 @@ function initTickers(containerId){
   if(!zone)return;
   zone.innerHTML='';
   const pool=[...TICKER_DATA];
-  // shuffle pool
   for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
-  // 3 rows, each gets 5 quotes (from shuffled pool, wrapping if needed)
-  const speeds=[42,58,48];
+  const speeds=[40,56,46];
   for(let row=0;row<3;row++){
-    const rowQuotes=[];
-    for(let q=0;q<5;q++){rowQuotes.push(pool[(row*5+q)%pool.length]);}
     const rowEl=document.createElement('div');
     rowEl.className='ticker-row';
+    rowEl.style.cssText='width:100%;overflow:hidden;position:relative;height:26px;';
     const track=document.createElement('div');
     track.className='ticker-track';
+    track.style.cssText='display:inline-flex;align-items:center;white-space:nowrap;will-change:transform;';
+    const rowQuotes=[];
+    for(let q=0;q<5;q++)rowQuotes.push(pool[(row*5+q)%pool.length]);
     let content='';
     rowQuotes.forEach(item=>{
-      const ghost=getMoodGhost(item.mood,18,20);
-      content+=`<span class="ticker-item">${item.text} ${ghost}</span><span class="ticker-sep"></span>`;
+      const ghost=getMoodGhost(item.mood,16,18);
+      content+=`<span style="display:inline-flex;align-items:center;gap:8px;padding:0 28px;font-family:var(--font-mono);font-size:10px;color:var(--t4);white-space:nowrap;flex-shrink:0;">${item.text} ${ghost}</span><span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--purple-dark);margin:0 10px;opacity:0.4;flex-shrink:0;"></span>`;
     });
-    track.innerHTML=content.repeat(3);
+    // triple the content for seamless loop
+    track.innerHTML=content+content+content;
     rowEl.appendChild(track);
     zone.appendChild(rowEl);
-    // start animation after layout
-    setTimeout(()=>{
-      const totalW=track.scrollWidth/3;
+    // animate after layout paint so we get real scrollWidth
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      const segW=track.scrollWidth/3;
       let x=0,last=null;
       const spd=speeds[row];
       function tick(ts){
-        if(last===null)last=ts;
-        x-=(totalW/spd)*((ts-last)/1000);
-        if(x<=-totalW)x=0;
+        if(last===null){last=ts;}
+        const dt=(ts-last)/1000;last=ts;
+        x-=(segW/spd)*dt;
+        if(x<=-segW)x+=segW;
         track.style.transform=`translateX(${x}px)`;
-        last=ts;
         requestAnimationFrame(tick);
       }
       requestAnimationFrame(tick);
-    },100);
+    }));
   }
 }
-
 
 // ── STARS ─────────────────────────────────────────────────────
 function initStars(){
