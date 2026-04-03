@@ -8,6 +8,8 @@
 <body>
 <canvas id="starCanvas"></canvas>
 <div class="page-wrap">
+<div class="mob-sb-overlay" id="mobOverlay" onclick="closeMobileSidebar()"></div>
+<button class="mob-sb-btn" id="mobSbBtn" onclick="toggleMobileSidebar()" aria-label="open menu">≡</button>
 <div id="nav-root"></div>
 <div class="nav-spacer"></div>
 <div class="page-body">
@@ -37,10 +39,7 @@
 <script>
 async function init(){
   document.getElementById('nav-root').innerHTML=renderNav();
-  // show mobile sidebar btn
-  const btn=document.getElementById('mobileSbBtn');
-  if(window.innerWidth<=900){btn.style.display='flex';}
-  window.addEventListener('resize',()=>{btn.style.display=window.innerWidth<=900?'flex':'none';});
+  // mobile sidebar handled by CSS mob-sb-btn visibility
 
   const [posts,about,tags]=await Promise.all([fetchPosts(),fetchAbout(),fetchTags()]);
 
@@ -73,6 +72,21 @@ async function init(){
     document.querySelector('.page-wrap').insertAdjacentHTML('afterbegin',`<div class="admin-bar"><span class="admin-bar-label">// admin mode</span><a href="/admin.html" class="adm-btn btn-save" style="text-decoration:none;">open admin →</a><button class="adm-btn" onclick="adminLogout();location.reload();" style="background:var(--bg2);color:var(--t3);border:1px solid var(--border);">logout</button></div>`);
   }
   initStars();
+}
+
+function toggleMobileSidebar(){
+  const sb=document.getElementById('mainSidebar');
+  const ov=document.getElementById('mobOverlay');
+  if(!sb)return;
+  const isOpen=sb.classList.contains('mob-open');
+  sb.classList.toggle('mob-open',!isOpen);
+  if(ov)ov.classList.toggle('show',!isOpen);
+}
+function closeMobileSidebar(){
+  const sb=document.getElementById('mainSidebar');
+  const ov=document.getElementById('mobOverlay');
+  if(sb)sb.classList.remove('mob-open');
+  if(ov)ov.classList.remove('show');
 }
 init();
 </script>
