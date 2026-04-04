@@ -121,7 +121,18 @@ async function init(){
       code.className='language-'+lang;
     }
   });
-  if(window.Prism)Prism.highlightAllUnder(pc);
+  // load specific language files then highlight
+  const usedLangs=[...new Set([...pc.querySelectorAll('code[class*="language-"]')].map(c=>(c.className.match(/language-(\w+)/)||[])[1]).filter(Boolean))];
+  function runHighlight(){if(window.Prism)Prism.highlightAllUnder(pc);}
+  if(!usedLangs.length){runHighlight();return;}
+  let loaded=0;
+  usedLangs.forEach(lang=>{
+    if(window.Prism&&Prism.languages[lang]){loaded++;if(loaded===usedLangs.length)runHighlight();return;}
+    const s=document.createElement('script');
+    s.src=`https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-${lang}.min.js`;
+    s.onload=s.onerror=()=>{loaded++;if(loaded===usedLangs.length)runHighlight();};
+    document.head.appendChild(s);
+  });
   // render latex blocks
   // render all latex blocks from data-latex attribute
   if(window.katex){

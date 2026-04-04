@@ -263,6 +263,9 @@ body{overflow:hidden;}
 
 <script src="/assets/js/main.js"></script>
 <script>
+// PASSWORD HASH — SHA-256 of your password. Never store plaintext here.
+// Default hash below = SHA-256 of 'changethis'
+// To change: open generate-hash.html in browser, type new password, copy hash, paste here
 const ADMIN_PASSWORD_HASH = '8328f55faf3a6742cd10469196f501ec7bc05b87c68c14bf03ae620fe9769a59';
 
 let allPosts=[],editingId=null,currentThumb='';
@@ -378,7 +381,7 @@ function renderSidebarPosts(filter=''){
   allPosts.forEach(p=>{if(!filter||p.title.toLowerCase().includes(filter)){if(!grouped[p.category])grouped[p.category]=[];grouped[p.category].push(p);}});
   Object.entries(grouped).forEach(([cat,posts])=>{
     html+=`<div class="adm-group-label"><span style="color:var(--t2);">#${cat}</span><span>${posts.length}</span></div>`;
-    posts.forEach(p=>{html+=`<div class="adm-post-item${editingId===p.id?' active':''}" onclick="loadPost(${JSON.stringify(p).replace(/"/g,'&quot;')})"><div class="pi-wrap"><div class="pi-body"><div class="adm-post-item-title">${p.pinned?'📌 ':''}${p.title}</div><div class="adm-post-meta"><span>${p.date}</span><span style="color:${p.published?'var(--green)':'var(--yellow)'};">${p.published?'pub':'draft'}</span></div></div><button class="pa-del" onclick="event.stopPropagation();deletePostById('${p.id}')">✕</button></div></div>`;});
+    posts.forEach(p=>{html+=`<div class="adm-post-item${editingId===p.id?' active':''}" onclick="loadPost(${JSON.stringify(p).replace(/"/g,'&quot;')})"><div class="pi-wrap"><div class="pi-body"><div class="adm-post-item-title">${p.pinned?'📌 ':''}${p.title.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div><div class="adm-post-meta"><span>${p.date}</span><span style="color:${p.published?'var(--green)':'var(--yellow)'};">${p.published?'pub':'draft'}</span></div></div><button class="pa-del" onclick="event.stopPropagation();deletePostById('${p.id}')">✕</button></div></div>`;});
   });
   document.getElementById('sidebarPosts').innerHTML=html||`<div style="padding:14px;font-family:var(--font-mono);font-size:11px;color:var(--t4);">no posts yet</div>`;
 }
@@ -409,7 +412,12 @@ async function save(publish){
   const readTime=calcReadTime(content),pinned=document.getElementById('pinnedCheck').checked;
   const date=new Date().toISOString().split('T')[0];
   const postData={id,title,category:cat,tags,date,readTime,mood,pinned,published:publish,thumbnail:currentThumb,content};
-  const metaData={id,title,category:cat,tags,date,readTime,mood,pinned,published:publish,thumbnail:currentThumb,excerpt:editor.innerText.slice(0,150).replace(/\n/g,' '),file:`posts/${id}.json`};
+  const metaData={id,title,category:cat,tags,date,readTime,mood,pinned,published:publish,thumbnail:currentThumb,excerpt:(()=>{
+    const tmp=document.createElement('div');
+    tmp.innerHTML=editor.innerHTML;
+    tmp.querySelectorAll('.latex-block,.code-lang-badge,pre').forEach(el=>el.remove());
+    return tmp.innerText.slice(0,150).replace(/\n/g,' ').trim();
+  })(),file:`posts/${id}.json`};
   setStatus('saving...','var(--t3)');
   const ok=await githubSave(`posts/${id}.json`,postData,`${publish?'publish':'draft'}: ${title}`);
   if(!ok){setStatus('save failed — check token','var(--pink)');return;}
