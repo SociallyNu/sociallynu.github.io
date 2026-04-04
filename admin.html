@@ -173,6 +173,18 @@ body{overflow:hidden;}
           <button class="tb-btn" onclick="fmt('underline')"><u>U</u></button>
           <button class="tb-btn" onclick="fmt('strikeThrough')"><s>S</s></button>
           <button class="tb-btn" onclick="fmtMono()" style="font-family:monospace;">M</button>
+          <button class="tb-btn" onclick="fmt('subscript')" title="subscript">x₂</button>
+          <button class="tb-btn" onclick="fmt('superscript')" title="superscript">x²</button>
+          <select class="sel-inp" onchange="applyFontSize(this.value);this.value='';" style="font-size:10px;padding:3px 4px;width:54px;" title="font size">
+            <option value="">size</option>
+            <option value="11px">11</option>
+            <option value="13px">13</option>
+            <option value="15px">15</option>
+            <option value="18px">18</option>
+            <option value="22px">22</option>
+            <option value="26px">26</option>
+            <option value="32px">32</option>
+          </select>
         </div>
         <div class="tb-grp">
           <span class="tb-lbl">text</span>

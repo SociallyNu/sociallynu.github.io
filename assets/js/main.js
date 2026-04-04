@@ -293,6 +293,7 @@ function initTickers(containerId){
   for(let row=0;row<3;row++){
     const rowEl=document.createElement('div');
     rowEl.className='ticker-row';
+    rowEl.style.cssText='width:100%;overflow:hidden;position:relative;';
     rowEl.style.cssText='width:100%;overflow:hidden;position:relative;height:26px;';
     const track=document.createElement('div');
     track.className='ticker-track';
