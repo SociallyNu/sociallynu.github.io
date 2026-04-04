@@ -4,6 +4,11 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Admin — SociallyNu.</title>
 <link rel="stylesheet" href="/assets/css/style.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <style>
 body{overflow:hidden;}
 .adm-layout{display:grid;grid-template-rows:auto 1fr;height:100vh;}
@@ -705,13 +710,25 @@ function updateStats(){const txt=editor.innerText.trim();const w=txt?txt.split(/
 function insertNode(node){
   editor.focus();
   const sel=window.getSelection();
-  if(sel.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(node);r.setStartAfter(node);r.collapse(true);sel.removeAllRanges();sel.addRange(r);}
-  else editor.appendChild(node);
-  // if node is non-editable block (latex), make it deletable via click+backspace
+  let inserted=false;
+  if(sel.rangeCount){
+    const r=sel.getRangeAt(0);
+    // only insert at cursor if cursor is inside the editor
+    if(editor.contains(r.commonAncestorContainer)){
+      r.deleteContents();r.insertNode(node);
+      r.setStartAfter(node);r.collapse(true);
+      sel.removeAllRanges();sel.addRange(r);
+      inserted=true;
+    }
+  }
+  if(!inserted){
+    editor.appendChild(node);
+    const r2=document.createRange();r2.setStartAfter(node);r2.collapse(true);
+    sel.removeAllRanges();sel.addRange(r2);
+  }
   if(node.contentEditable==='false'){
     node.addEventListener('click',function(e){
       e.stopPropagation();
-      // select the whole block
       const r=document.createRange();r.selectNode(node);
       const s=window.getSelection();s.removeAllRanges();s.addRange(r);
     });
@@ -849,6 +866,20 @@ function makeResizable(wrap){
 
 // ── CURSOR ESCAPE FROM BLOCKS ─────────────────────────────────
 editor.addEventListener('keydown',function(e){
+  // Tab key: indent inside code blocks
+  if(e.key==='Tab'){
+    const sel=window.getSelection();
+    if(!sel.rangeCount)return;
+    let node=sel.getRangeAt(0).commonAncestorContainer;
+    while(node&&node!==editor){
+      if(node.tagName==='PRE'||node.tagName==='CODE'){
+        e.preventDefault();
+        document.execCommand('insertText',false,e.shiftKey?'':'  ');
+        return;
+      }
+      node=node.parentNode;
+    }
+  }
   // escape subscript/superscript with Space at end of sub/super span
   if(e.key===' '||e.key==='ArrowRight'){
     const sel=window.getSelection();
@@ -871,24 +902,31 @@ editor.addEventListener('keydown',function(e){
     const sel=window.getSelection();
     if(!sel.rangeCount)return;
     let node=sel.getRangeAt(0).commonAncestorContainer;
-    // walk up to find block element
     while(node&&node!==editor){
-      if(node.tagName==='PRE'||node.tagName==='BLOCKQUOTE'||node.tagName==='TABLE'){
-        // check if we're at the END of the block
-        const range=sel.getRangeAt(0);
-        const endRange=document.createRange();
-        endRange.selectNodeContents(node);
-        endRange.collapse(false);
-        const isAtEnd=range.compareBoundaryPoints(Range.END_TO_END,endRange)>=0;
-        if(isAtEnd){
+      if(node.tagName==='PRE'){
+        // Inside code block: Shift+Enter escapes, plain Enter = newline (let browser handle)
+        if(e.shiftKey){
           e.preventDefault();
-          // insert a <p> after the block
           const p=document.createElement('p');p.innerHTML='<br>';
           node.after(p);
           const r=document.createRange();r.setStart(p,0);r.collapse(true);
           sel.removeAllRanges();sel.addRange(r);
         }
-        break;
+        // else: let browser insert newline naturally inside pre
+        return;
+      }
+      if(node.tagName==='BLOCKQUOTE'){
+        const range=sel.getRangeAt(0);
+        const endRange=document.createRange();
+        endRange.selectNodeContents(node);endRange.collapse(false);
+        if(range.compareBoundaryPoints(Range.END_TO_END,endRange)>=0){
+          e.preventDefault();
+          const p=document.createElement('p');p.innerHTML='<br>';
+          node.after(p);
+          const r=document.createRange();r.setStart(p,0);r.collapse(true);
+          sel.removeAllRanges();sel.addRange(r);
+        }
+        return;
       }
       node=node.parentNode;
     }
