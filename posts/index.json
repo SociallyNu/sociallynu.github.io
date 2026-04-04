@@ -10,7 +10,7 @@
     "readTime": 1,
     "mood": "exhausted",
     "pinned": false,
-    "published": false,
+    "published": true,
     "thumbnail": "",
     "excerpt": "heading 1heading 2Hiheading 3heading 4Col 1Col 2Col 3cellcellcellcellcellcellheading 5",
     "file": "posts/691378.json"
