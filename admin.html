@@ -551,6 +551,10 @@ function insertCode(){
   }
   const btn=Array.from(document.querySelectorAll('.tb-btn')).find(b=>b.textContent.trim()==='</>');
   if(btn){const r=btn.getBoundingClientRect();picker.style.top=(r.bottom+4)+'px';picker.style.left=r.left+'px';}
+  // save cursor position BEFORE picker opens and editor loses focus
+  const sel0=window.getSelection();
+  if(sel0.rangeCount)window._savedCodeRange=sel0.getRangeAt(0).cloneRange();
+  else window._savedCodeRange=null;
   renderLangList('');picker.style.display='block';
   setTimeout(()=>document.getElementById('langSearch')?.focus(),50);
   setTimeout(()=>{
@@ -568,9 +572,38 @@ function pickLang(lang){
   const pre=document.createElement('pre');
   const code=document.createElement('code');code.className=`language-${lang}`;code.textContent='# your code here';
   const badge=document.createElement('span');badge.className='code-lang-badge';badge.textContent=lang.toUpperCase();
-  pre.appendChild(code);pre.appendChild(badge);insertNode(pre);
-  const r=document.createRange();r.selectNodeContents(code);r.collapse(false);
-  const s=window.getSelection();s.removeAllRanges();s.addRange(r);editor.focus();
+  pre.appendChild(code);pre.appendChild(badge);
+
+  // restore saved cursor position
+  editor.focus();
+  if(window._savedCodeRange){
+    const sel=window.getSelection();
+    sel.removeAllRanges();sel.addRange(window._savedCodeRange);
+    window._savedCodeRange=null;
+  }
+
+  // if cursor is inside a pre/code block, insert AFTER that block instead
+  const sel2=window.getSelection();
+  let insertAfterNode=null;
+  if(sel2.rangeCount){
+    let node=sel2.getRangeAt(0).commonAncestorContainer;
+    while(node&&node!==editor){
+      if(node.tagName==='PRE'||node.tagName==='CODE'){insertAfterNode=node.tagName==='CODE'?node.closest('pre'):node;break;}
+      node=node.parentNode;
+    }
+  }
+
+  if(insertAfterNode){
+    // insert after the existing code block
+    insertAfterNode.after(pre);
+    const r=document.createRange();r.selectNodeContents(code);r.collapse(false);
+    sel2.removeAllRanges();sel2.addRange(r);
+  } else {
+    insertNode(pre);
+    const r=document.createRange();r.selectNodeContents(code);r.collapse(false);
+    const s=window.getSelection();s.removeAllRanges();s.addRange(r);
+  }
+  editor.focus();
 }
 function insertQuote(){
   const bq=document.createElement('blockquote');bq.innerHTML='<p>quote here</p>';
