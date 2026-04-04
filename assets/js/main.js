@@ -1,6 +1,5 @@
-// ── CONFIG (CHANGE BEFORE PUSHING) ───────────────────────────
+// ── CONFIG ───────────────────────────────────────────────────
 const GITHUB_REPO = 'SociallyNu/sociallynu.github.io';
-const ADMIN_PASSWORD = 'changethis';
 const GITHUB_TOKEN_KEY = 'snu_gh_token';
 const PFP_KEY = 'snu_pfp';
 
@@ -351,8 +350,8 @@ function initStars(){
 
 // ── ADMIN AUTH ────────────────────────────────────────────────
 function isAdmin(){return localStorage.getItem('snu_admin')==='true';}
-function adminLogin(pass){if(pass===ADMIN_PASSWORD){localStorage.setItem('snu_admin','true');return true;}return false;}
-function adminLogout(){localStorage.removeItem('snu_admin');}
+// adminLogin handled in admin.html via SHA-256 hash
+function adminLogout(){localStorage.removeItem('snu_admin');localStorage.removeItem('snu_admin_hash');}
 function getToken(){return localStorage.getItem(GITHUB_TOKEN_KEY)||'';}
 
 // ── GITHUB API ────────────────────────────────────────────────

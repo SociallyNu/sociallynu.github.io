@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Generate Password Hash — SociallyNu Admin</title>
+<style>
+body{background:#06080f;color:#e8e2ff;font-family:'Space Mono',monospace;padding:40px;font-size:14px;}
+input{background:#0b0d1c;border:1px solid #2a1f4a;border-radius:6px;padding:10px 14px;color:#e8e2ff;width:320px;font-family:'Space Mono',monospace;font-size:14px;outline:none;margin-right:10px;}
+button{background:#a78bfa;color:#06080f;border:none;border-radius:6px;padding:10px 20px;cursor:pointer;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;letter-spacing:1px;}
+.hash{background:#0b0d1c;border:1px solid #1e2240;border-radius:6px;padding:14px;margin-top:14px;word-break:break-all;color:#34d399;font-size:12px;display:none;}
+.instructions{background:#0d0a1e;border:1px solid #2a1f4a;border-radius:8px;padding:20px;margin-top:24px;font-size:12px;line-height:1.9;color:#7880aa;}
+.instructions strong{color:#e8e2ff;}
+.instructions code{color:#a78bfa;background:#06080f;padding:2px 6px;border-radius:3px;}
+h2{color:#a78bfa;margin-bottom:20px;font-size:16px;letter-spacing:2px;}
+</style>
+</head>
+<body>
+<h2>// admin password hash generator</h2>
+<p style="color:#7880aa;margin-bottom:20px;">type ur new password below, click generate, then copy the hash into admin.html</p>
+<div>
+  <input type="password" id="pw" placeholder="enter your new password"/>
+  <button onclick="generate()">generate hash →</button>
+</div>
+<div class="hash" id="hashOut"></div>
+
+<div class="instructions">
+  <strong>how to use:</strong><br>
+  1. type ur password above → click generate<br>
+  2. copy the hash (the long green string)<br>
+  3. open <code>admin.html</code> in VS Code<br>
+  4. find the line: <code>const ADMIN_PASSWORD_HASH = '...'</code><br>
+  5. replace the value with ur copied hash<br>
+  6. push to github — ur password is now <strong>never exposed</strong> in the code<br><br>
+  <strong>the hash for 'changethis' is already in admin.html as default.</strong><br>
+  if u haven't changed it yet, type 'changethis' above to see it matches.
+</div>
+
+<script>
+async function generate(){
+  const pw=document.getElementById('pw').value;
+  if(!pw){alert('enter a password first');return;}
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw));
+  const hash=Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  const out=document.getElementById('hashOut');
+  out.style.display='block';
+  out.innerHTML=`
+    <div style="color:#7880aa;font-size:10px;margin-bottom:6px;letter-spacing:1px;">SHA-256 HASH OF "${pw}":</div>
+    <div style="cursor:pointer;" onclick="navigator.clipboard.writeText('${hash}').then(()=>{this.style.color='#fbbf24';setTimeout(()=>this.style.color='#34d399',1000)})" title="click to copy">
+      ${hash}
+    </div>
+    <div style="color:#7880aa;font-size:10px;margin-top:8px;">↑ click to copy</div>`;
+}
+document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')generate();});
+</script>
+</body>
+</html>

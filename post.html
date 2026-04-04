@@ -90,9 +90,13 @@ async function init(){
     if(lang){const b=document.createElement('span');b.className='code-lang-badge';b.textContent=lang;c.parentElement.appendChild(b);}
   });
 
-  // strip any contenteditable attributes that leaked through
-  document.querySelectorAll('#postContent [contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
-  if(window.Prism)Prism.highlightAllUnder(document.getElementById('postContent'));
+  // strip any contenteditable attributes and font tags that leaked through
+  const pc=document.getElementById('postContent');
+  pc.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+  // strip font tags in pre blocks (fixes syntax highlighting)
+  pc.querySelectorAll('pre font').forEach(f=>{const t=document.createTextNode(f.textContent);f.replaceWith(t);});
+  pc.querySelectorAll('pre [style]').forEach(el=>el.removeAttribute('style'));
+  if(window.Prism)Prism.highlightAllUnder(pc);
   // render latex blocks
   // render all latex blocks from data-latex attribute
   if(window.katex){
@@ -134,19 +138,24 @@ function buildTOC(){
   });
   if(!headings.length){document.getElementById('tocRoot').innerHTML='';return;}
   
-  // indent map: h1=0, h2=0, h3=1, h4=2, h5=3, h6=3
-  const indentLevel={'H1':0,'H2':0,'H3':1,'H4':2,'H5':3,'H6':3};
-  const indentPx=[0,0,12,20,28,28];
-  
+  // H1=level1, H2=level2, H3=level3, H4=level4, H5=level5, H6=level6
+  // indent increases with each level from H1
+  const levelMap={'H1':1,'H2':2,'H3':3,'H4':4,'H5':5,'H6':6};
+  const indentPx={1:0,2:10,3:20,4:28,5:34,6:38};
+  const fontSz={1:11,2:11,3:10,4:10,5:9,6:9};
+  const opacityMap={1:1,2:0.9,3:0.8,4:0.7,5:0.6,6:0.55};
+
   let n=1;
   const items=headings.map(h=>{
     const hid=`toc-h-${n}`;h.id=hid;
-    const lvl=indentLevel[h.tagName]||0;
-    const indent=lvl>0?`padding-left:${indentPx[lvl]}px;font-size:${11-lvl}px;`:'';
-    const opacity=lvl>1?`opacity:${1-lvl*0.1};`:'';
-    return `<div class="toc-item" style="${indent}${opacity}" onclick="document.getElementById('${hid}').scrollIntoView({behavior:'smooth'})">
+    const lvl=levelMap[h.tagName]||1;
+    const pl=indentPx[lvl];
+    const fs=fontSz[lvl];
+    const op=opacityMap[lvl];
+    const style=`padding-left:${pl}px;font-size:${fs}px;opacity:${op};`;
+    return `<div class="toc-item" style="${style}" onclick="document.getElementById('${hid}').scrollIntoView({behavior:'smooth'})">
       <span class="toc-num">${String(n++).padStart(2,'0')}</span>
-      <span>${h.textContent.slice(0,38)}</span>
+      <span class="toc-text">${h.textContent.slice(0,36)}</span>
     </div>`;
   });
   document.getElementById('tocRoot').innerHTML=`<div class="sb-label">in this post</div>${items.join('')}`;

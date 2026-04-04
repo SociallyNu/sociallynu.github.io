@@ -90,7 +90,7 @@ body{overflow:hidden;}
       <a href="/admin-about.html" class="adm-btn btn-save" style="text-decoration:none;">about/now ↗</a>
       <button class="adm-btn btn-save" onclick="saveDraft()">save draft</button>
       <button class="adm-btn btn-pub" onclick="publishPost()">publish →</button>
-      <button class="adm-btn" onclick="adminLogout();location.reload();" style="background:var(--bg2);color:var(--t3);border:1px solid var(--border);">logout</button>
+      <button class="adm-btn" onclick="localStorage.removeItem('snu_admin');localStorage.removeItem('snu_admin_hash');location.reload();" style="background:var(--bg2);color:var(--t3);border:1px solid var(--border);">logout</button>
     </div>
   </div>
   <div class="adm-body">
@@ -261,16 +261,43 @@ body{overflow:hidden;}
 
 <script src="/assets/js/main.js"></script>
 <script>
+const ADMIN_PASSWORD_HASH = '8328f55faf3a6742cd10469196f501ec7bc05b87c68c14bf03ae620fe9769a59';
+
 let allPosts=[],editingId=null,currentThumb='';
 const editor=document.getElementById('editor');
 
-function doLogin(){
+async function doLogin(){
   const pass=document.getElementById('passInput').value;
   const token=document.getElementById('tokenInput').value.trim();
   if(token)localStorage.setItem(GITHUB_TOKEN_KEY,token);
-  if(adminLogin(pass)){document.getElementById('loginScreen').style.display='none';document.getElementById('adminUI').style.display='grid';adminInit();}
-  else{const i=document.getElementById('passInput');i.style.borderColor='var(--pink)';setTimeout(()=>i.style.borderColor='',1500);}
+  // hash the entered password and compare
+  const hash=await sha256(pass);
+  if(hash===ADMIN_PASSWORD_HASH){
+    localStorage.setItem('snu_admin','true');
+    localStorage.setItem('snu_admin_hash',hash);
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('adminUI').style.display='grid';
+    adminInit();
+  } else {
+    const i=document.getElementById('passInput');
+    i.style.borderColor='var(--pink)';
+    i.value='';
+    i.placeholder='wrong password';
+    setTimeout(()=>{i.style.borderColor='';i.placeholder='password';},1500);
+  }
 }
+
+async function sha256(str){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function isAdmin(){
+  // verify stored hash matches current hash constant
+  return localStorage.getItem('snu_admin')==='true'&&
+         localStorage.getItem('snu_admin_hash')===ADMIN_PASSWORD_HASH;
+}
+
 if(isAdmin()){document.getElementById('loginScreen').style.display='none';document.getElementById('adminUI').style.display='grid';}
 
 async function handlePfpUpload(e){
@@ -579,23 +606,53 @@ function insertGhost(mood){document.getElementById('ghostPicker').classList.remo
 document.addEventListener('click',e=>{if(!e.target.closest('#ghostPicker')&&!e.target.closest('#ghostPickerBtn'))document.getElementById('ghostPicker')?.classList.remove('show');});
 
 function switchTab(tab,el){
+  // if leaving HTML tab, sync edits back to editor
+  const htmlPane=document.getElementById('htmlPane');
+  if(htmlPane.classList.contains('show')&&tab!=='html'){
+    editor.innerHTML=htmlPane.textContent;
+    updateStats();
+  }
   document.querySelectorAll('.ed-tab').forEach(t=>t.classList.remove('active'));
   if(el)el.classList.add('active');
   editor.style.display=tab==='write'?'block':'none';
+  if(tab==='write'){setTimeout(()=>renderAllLatex(editor),50);}
   document.getElementById('previewPane').classList.toggle('show',tab==='preview');
-  document.getElementById('htmlPane').classList.toggle('show',tab==='html');
+  htmlPane.classList.toggle('show',tab==='html');
   if(tab==='preview'){
     const pane=document.getElementById('previewPane');
     pane.innerHTML=editor.innerHTML;
     if(window.Prism)Prism.highlightAllUnder(pane);
     renderAllLatex(pane);
   }
-  if(tab==='html')document.getElementById('htmlPane').textContent=editor.innerHTML;
+  if(tab==='html'){
+    // pretty print HTML
+    let h=editor.innerHTML;
+    // basic indent: add newlines after block tags
+    h=h.replace(/></g,'>\n<').replace(/>\n<\//g,'><\/');
+    htmlPane.textContent=h;
+    htmlPane.contentEditable='true';
+    htmlPane.setAttribute('spellcheck','false');
+  }
 }
 
 function updateStats(){const txt=editor.innerText.trim();const w=txt?txt.split(/\s+/).length:0;document.getElementById('wc').textContent=w;document.getElementById('rt').textContent=`~${Math.max(1,Math.round(w/200))} min`;setStatus('unsaved','var(--yellow)');}
 
-function insertNode(node){editor.focus();const sel=window.getSelection();if(sel.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(node);r.setStartAfter(node);r.collapse(true);sel.removeAllRanges();sel.addRange(r);}else editor.appendChild(node);updateStats();}
+function insertNode(node){
+  editor.focus();
+  const sel=window.getSelection();
+  if(sel.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(node);r.setStartAfter(node);r.collapse(true);sel.removeAllRanges();sel.addRange(r);}
+  else editor.appendChild(node);
+  // if node is non-editable block (latex), make it deletable via click+backspace
+  if(node.contentEditable==='false'){
+    node.addEventListener('click',function(e){
+      e.stopPropagation();
+      // select the whole block
+      const r=document.createRange();r.selectNode(node);
+      const s=window.getSelection();s.removeAllRanges();s.addRange(r);
+    });
+  }
+  updateStats();
+}
 
 function tblMerge(){
   // merge selected cells by setting colspan on first selected cell
