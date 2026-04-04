@@ -266,7 +266,7 @@ body{overflow:hidden;}
 // PASSWORD HASH — SHA-256 of your password. Never store plaintext here.
 // Default hash below = SHA-256 of 'changethis'
 // To change: open generate-hash.html in browser, type new password, copy hash, paste here
-const ADMIN_PASSWORD_HASH = '8328f55faf3a6742cd10469196f501ec7bc05b87c68c14bf03ae620fe9769a59';
+const ADMIN_PASSWORD_HASH = '7765c1f6f26addd7494d76fde6e9b6e697da65d25f52d15f00ccce7c52e1bc20';
 
 let allPosts=[],editingId=null,currentThumb='';
 const editor=document.getElementById('editor');
@@ -532,12 +532,40 @@ function insertParagraph(){
   const s=window.getSelection();s.removeAllRanges();s.addRange(r);
 }
 
+const PRISM_LANGS=['python','javascript','typescript','java','cpp','c','csharp','go','rust','bash','shell','sql','html','css','scss','json','yaml','toml','markdown','r','swift','kotlin','php','ruby','scala','lua','dart','jsx','tsx','matlab','perl'];
+
 function insertCode(){
-  const lang=prompt('language:','python')||'python';
+  let picker=document.getElementById('langPicker');
+  if(!picker){
+    picker=document.createElement('div');picker.id='langPicker';
+    picker.style.cssText='position:fixed;background:#0d0f20;border:1px solid var(--purple-dark);border-radius:10px;padding:12px;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,0.9);width:240px;display:none;';
+    picker.innerHTML=`<div style="font-family:var(--font-mono);font-size:9px;color:var(--purple);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;font-weight:700;">select language</div>
+      <input id="langSearch" placeholder="search..." style="width:100%;font-family:var(--font-mono);font-size:11px;background:var(--bg2);border:1px solid var(--border);border-radius:4px;padding:6px 10px;color:var(--t2);outline:none;margin-bottom:8px;box-sizing:border-box;" oninput="filterLangs(this.value)"/>
+      <div id="langList" style="max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:2px;"></div>`;
+    document.body.appendChild(picker);
+  }
+  const btn=Array.from(document.querySelectorAll('.tb-btn')).find(b=>b.textContent.trim()==='</>');
+  if(btn){const r=btn.getBoundingClientRect();picker.style.top=(r.bottom+4)+'px';picker.style.left=r.left+'px';}
+  renderLangList('');picker.style.display='block';
+  setTimeout(()=>document.getElementById('langSearch')?.focus(),50);
+  setTimeout(()=>{
+    function close(e){if(!e.target.closest('#langPicker')){picker.style.display='none';document.removeEventListener('click',close);}}
+    document.addEventListener('click',close);
+  },100);
+}
+function renderLangList(f){
+  const list=document.getElementById('langList');if(!list)return;
+  list.innerHTML=PRISM_LANGS.filter(l=>l.includes(f.toLowerCase())).map(l=>`<div onclick="pickLang('${l}')" style="font-family:var(--font-mono);font-size:11px;padding:6px 10px;border-radius:4px;color:var(--t2);cursor:pointer;" onmouseover="this.style.background='#1a1535'" onmouseout="this.style.background=''">${l}</div>`).join('');
+}
+function filterLangs(v){renderLangList(v);}
+function pickLang(lang){
+  document.getElementById('langPicker').style.display='none';
   const pre=document.createElement('pre');
-  const code=document.createElement('code');code.className=`language-${lang}`;code.textContent='// your code here';
-  const badge=document.createElement('span');badge.className='code-lang-badge';badge.textContent=lang;
+  const code=document.createElement('code');code.className=`language-${lang}`;code.textContent='# your code here';
+  const badge=document.createElement('span');badge.className='code-lang-badge';badge.textContent=lang.toUpperCase();
   pre.appendChild(code);pre.appendChild(badge);insertNode(pre);
+  const r=document.createRange();r.selectNodeContents(code);r.collapse(false);
+  const s=window.getSelection();s.removeAllRanges();s.addRange(r);editor.focus();
 }
 function insertQuote(){
   const bq=document.createElement('blockquote');bq.innerHTML='<p>quote here</p>';
@@ -636,29 +664,30 @@ function switchTab(tab,el){
   if(tab==='preview'){
     const pane=document.getElementById('previewPane');
     pane.innerHTML=editor.innerHTML;
-    // strip font tags from pre blocks before highlighting
-    pane.querySelectorAll('pre font').forEach(f=>{const t=document.createTextNode(f.textContent);f.replaceWith(t);});
-    pane.querySelectorAll('pre [style]').forEach(el=>el.removeAttribute('style'));
-    // ensure code tags have language class for prism
+    // 1. strip contenteditable so katex can render into elements
+    pane.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
+    // 2. fix pre blocks - strip font tags, ensure code wrapper with language class
     pane.querySelectorAll('pre').forEach(pre=>{
+      pre.querySelectorAll('font').forEach(f=>{const t=document.createTextNode(f.textContent);f.replaceWith(t);});
+      pre.querySelectorAll('[style]').forEach(el=>el.removeAttribute('style'));
       const badge=pre.querySelector('.code-lang-badge');
-      const lang=badge?badge.textContent.trim():'';
+      const lang=badge?badge.textContent.toLowerCase().trim():'';
       let code=pre.querySelector('code');
       if(!code){
-        // wrap plain text content in a code tag
-        const text=pre.textContent.replace(badge?badge.textContent:'','').trim();
-        pre.innerHTML='';
-        code=document.createElement('code');
-        code.textContent=text;
-        if(lang)code.className='language-'+lang;
-        pre.appendChild(code);
-        if(badge)pre.appendChild(badge);
-      } else if(lang&&!code.className){
-        code.className='language-'+lang;
-      }
+        const txt=Array.from(pre.childNodes).filter(n=>n!==badge).map(n=>n.textContent).join('');
+        code=document.createElement('code');if(lang)code.className=`language-${lang}`;code.textContent=txt;
+        while(pre.firstChild)pre.removeChild(pre.firstChild);pre.appendChild(code);if(badge)pre.appendChild(badge);
+      } else if(lang&&!code.className.includes('language-')){code.className=`language-${lang}`;}
     });
-    if(window.Prism)Prism.highlightAllUnder(pane);
-    renderAllLatex(pane);
+    // 3. render latex - clear old text first so katex can write fresh
+    pane.querySelectorAll('.latex-block[data-latex]').forEach(el=>{
+      const expr=el.getAttribute('data-latex');if(!expr)return;
+      el.innerHTML='';
+      if(window.katex){try{katex.render(expr,el,{displayMode:true,throwOnError:false,trust:true});}
+      catch(e){el.textContent='[LaTeX error] '+e.message;}}
+    });
+    // 4. syntax highlight with delayed second pass for autoloader
+    if(window.Prism){Prism.highlightAllUnder(pane);setTimeout(()=>Prism.highlightAllUnder(pane),500);}
   }
   if(tab==='html'){
     // pretty print HTML
