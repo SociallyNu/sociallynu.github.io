@@ -504,7 +504,37 @@ function insertQuote(){
   const r=document.createRange();r.setStart(p,0);r.collapse(true);
   const s=window.getSelection();s.removeAllRanges();s.addRange(r);
 }
-function insertLatex(){const expr=prompt('LaTeX:','E = mc^2')||'E = mc^2';const span=document.createElement('span');span.className='katex-src katex-display';span.textContent=expr;insertNode(span);}
+function insertLatex(){
+  const sel=window.getSelection();
+  const selectedText=sel.toString().trim();
+  const expr=selectedText||prompt(
+    'Enter LaTeX\n\nExamples:\n'+
+    '  E = mc^2\n'+
+    '  \\frac{a}{b}\n'+
+    '  x^2 + y^2 = r^2\n'+
+    '  \\sqrt{b^2-4ac}\n'+
+    '  \\sum_{i=1}^{n} x_i\n'+
+    '  \\begin{aligned} A &= x+y \\\\ &\\quad+z \\end{aligned}\n\n'+
+    'Tip: use \\begin{aligned}...\\end{aligned} for multi-line',
+    'E = mc^2');
+  if(!expr||!expr.trim())return;
+  const wrap=document.createElement('div');
+  wrap.className='latex-block';
+  wrap.setAttribute('data-latex',expr);
+  wrap.contentEditable='false';
+  if(window.katex){
+    try{katex.render(expr,wrap,{displayMode:true,throwOnError:false,trust:true});}
+    catch(e){wrap.innerHTML='<span style="font-family:monospace;color:#d4c5fa;font-size:11px;">[LaTeX] '+expr+'<br><small style="color:#f472b6;">'+e.message+'</small></span>';}
+  } else {
+    wrap.textContent='[LaTeX] '+expr;
+  }
+  if(selectedText&&sel.rangeCount){const r=sel.getRangeAt(0);r.deleteContents();r.insertNode(wrap);}
+  else insertNode(wrap);
+  const p=document.createElement('p');p.innerHTML='<br>';wrap.after(p);
+  const r=document.createRange();r.setStart(p,0);r.collapse(true);
+  const s=window.getSelection();s.removeAllRanges();s.addRange(r);
+  editor.focus();
+}
 
 function insertTable(){
   const rows=parseInt(prompt('rows:','3'))||3,cols=parseInt(prompt('cols:','3'))||3;
@@ -697,6 +727,24 @@ function makeResizable(wrap){
 
 // ── CURSOR ESCAPE FROM BLOCKS ─────────────────────────────────
 editor.addEventListener('keydown',function(e){
+  // escape subscript/superscript with Space at end of sub/super span
+  if(e.key===' '||e.key==='ArrowRight'){
+    const sel=window.getSelection();
+    if(sel.rangeCount){
+      let node=sel.getRangeAt(0).commonAncestorContainer;
+      if(node.nodeType===3)node=node.parentNode; // text node → parent
+      if(node.tagName==='SUB'||node.tagName==='SUP'){
+        e.preventDefault();
+        // move cursor after the sub/sup element
+        const range=document.createRange();
+        range.setStartAfter(node);range.collapse(true);
+        sel.removeAllRanges();sel.addRange(range);
+        // insert space if space was pressed
+        if(e.key===' ')document.execCommand('insertText',false,' ');
+        return;
+      }
+    }
+  }
   if(e.key==='Enter'){
     const sel=window.getSelection();
     if(!sel.rangeCount)return;

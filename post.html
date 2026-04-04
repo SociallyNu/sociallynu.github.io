@@ -90,6 +90,8 @@ async function init(){
     if(lang){const b=document.createElement('span');b.className='code-lang-badge';b.textContent=lang;c.parentElement.appendChild(b);}
   });
 
+  // strip any contenteditable attributes that leaked through
+  document.querySelectorAll('#postContent [contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
   if(window.Prism)Prism.highlightAllUnder(document.getElementById('postContent'));
   // render latex blocks
   // render all latex blocks from data-latex attribute
