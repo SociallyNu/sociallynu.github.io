@@ -59,7 +59,12 @@ async function init(){
     document.getElementById('admin-bar-root').innerHTML=`<div class="admin-bar"><span class="admin-bar-label">// admin mode</span><a href="/admin.html?edit=${post.id}" class="adm-btn btn-save" style="text-decoration:none;">edit post</a><button class="adm-btn" onclick="unpublishPost('${post.id}')" style="background:var(--bg2);color:var(--t3);border:1px solid var(--border);">unpublish</button><button class="adm-btn btn-del" onclick="deletePost('${post.id}')">delete</button></div>`;
   }
 
-  document.getElementById('postNuonRoot').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:4px;padding:4px 0;"><div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--t4);text-transform:uppercase;">reading along</div><div class="float">${getMoodGhost(post.mood,52,60)}</div><div style="font-family:var(--font-mono);font-size:9px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;font-weight:700;">${post.mood} nuon</div></div>`;
+  document.getElementById('postNuonRoot').innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px 0;">
+    <div style="font-family:var(--font-mono);font-size:9px;letter-spacing:1px;color:var(--t4);text-transform:uppercase;">reading along</div>
+    <div class="float" style="display:flex;align-items:center;justify-content:center;">${getMoodGhost(post.mood,90,104)}</div>
+    <div style="font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--purple);text-transform:uppercase;font-weight:700;">${post.mood} nuon</div>
+    <div style="font-family:var(--font-mono);font-size:8px;color:var(--t4);text-align:center;line-height:1.5;">emotional support<br>ghostling</div>
+  </div>`;
 
   const pub=allPosts.filter(p=>p.published).sort((a,b)=>b.date.localeCompare(a.date));
   const idx=pub.findIndex(p=>p.id===id);
@@ -90,12 +95,32 @@ async function init(){
     if(lang){const b=document.createElement('span');b.className='code-lang-badge';b.textContent=lang;c.parentElement.appendChild(b);}
   });
 
-  // strip any contenteditable attributes and font tags that leaked through
+  // strip contenteditable, fix code blocks, run prism
   const pc=document.getElementById('postContent');
   pc.querySelectorAll('[contenteditable]').forEach(el=>el.removeAttribute('contenteditable'));
-  // strip font tags in pre blocks (fixes syntax highlighting)
-  pc.querySelectorAll('pre font').forEach(f=>{const t=document.createTextNode(f.textContent);f.replaceWith(t);});
-  pc.querySelectorAll('pre [style]').forEach(el=>el.removeAttribute('style'));
+  // fix pre blocks: strip font tags, ensure code tag with language class exists
+  pc.querySelectorAll('pre').forEach(pre=>{
+    // strip font tags
+    pre.querySelectorAll('font').forEach(f=>{const t=document.createTextNode(f.textContent);f.replaceWith(t);});
+    pre.querySelectorAll('[style]').forEach(el=>el.removeAttribute('style'));
+    // get language from badge
+    const badge=pre.querySelector('.code-lang-badge');
+    const lang=badge?badge.textContent.trim().toLowerCase():'';
+    let code=pre.querySelector('code');
+    if(!code){
+      // no code tag - wrap content in one
+      const nodes=Array.from(pre.childNodes).filter(n=>!n.classList?.contains('code-lang-badge'));
+      const text=nodes.map(n=>n.textContent).join('').trim();
+      pre.innerHTML='';
+      code=document.createElement('code');
+      code.textContent=text;
+      if(lang)code.className='language-'+lang;
+      pre.appendChild(code);
+      if(badge)pre.appendChild(badge);
+    } else if(lang&&!code.className.includes('language-')){
+      code.className='language-'+lang;
+    }
+  });
   if(window.Prism)Prism.highlightAllUnder(pc);
   // render latex blocks
   // render all latex blocks from data-latex attribute

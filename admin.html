@@ -129,8 +129,10 @@ body{overflow:hidden;}
           <div style="border-top:1px solid var(--border);padding-top:14px;">
             <div class="settings-section-title">Config (edit in code)</div>
             <div style="font-family:var(--font-mono);font-size:9px;color:var(--t4);line-height:1.8;">
+              <strong style="color:var(--t2);">admin.html</strong> (find ADMIN_PASSWORD_HASH):<br>
+              · run <span style="color:var(--purple);">generate-hash.html</span> → copy hash<br>
+              · paste into <span style="color:var(--purple);">ADMIN_PASSWORD_HASH</span> line<br><br>
               <strong style="color:var(--t2);">assets/js/main.js</strong>:<br>
-              · <span style="color:var(--purple);">ADMIN_PASSWORD</span><br>
               · <span style="color:var(--purple);">GITHUB_REPO</span><br><br>
               <strong style="color:var(--t2);">admin.html</strong>:<br>
               · <span style="color:var(--purple);">sociallynu.tumblr.com</span>
@@ -423,11 +425,16 @@ function saveDraft(){save(false);}function publishPost(){save(true);}
 function setStatus(t,c){document.getElementById('statusEl').textContent=t;document.getElementById('statusEl').style.color=c;}
 
 async function deletePostById(id){
-  if(!confirm('delete permanently?'))return;
+  const post=allPosts.find(p=>p.id===id);
+  const title=post?post.title:'this post';
+  const input=prompt(`⚠️ DELETE PERMANENTLY?\n\nPost: "${title}"\n\nThis cannot be undone. Type DELETE to confirm:`);
+  if(input!=='DELETE')return;
+  setStatus('deleting...','var(--pink)');
   allPosts=allPosts.filter(p=>p.id!==id);
-  await githubSave('posts/index.json',allPosts,'delete '+id);
+  const ok=await githubSave('posts/index.json',allPosts,'delete '+id);
   await githubDelete(`posts/${id}.json`);
-  if(editingId===id)newPost();renderSidebarPosts();
+  if(ok){if(editingId===id)newPost();renderSidebarPosts();setStatus('deleted','var(--t4)');}
+  else setStatus('delete failed — check token','var(--pink)');
 }
 
 async function handleThumb(e){
@@ -602,7 +609,7 @@ function toggleGhostPicker(e){
   p.style.top=(rect.bottom+6)+'px';p.style.left=Math.max(4,rect.left-100)+'px';
   p.classList.add('show');
 }
-function insertGhost(mood){document.getElementById('ghostPicker').classList.remove('show');restoreSelection();const span=document.createElement('span');span.className='ghost-inline';span.innerHTML=getMoodGhost(mood,36,42);insertNode(span);editor.focus();}
+function insertGhost(mood){document.getElementById('ghostPicker').classList.remove('show');restoreSelection();const span=document.createElement('span');span.className='ghost-inline';span.innerHTML=getMoodGhost(mood,56,64);insertNode(span);editor.focus();}
 document.addEventListener('click',e=>{if(!e.target.closest('#ghostPicker')&&!e.target.closest('#ghostPickerBtn'))document.getElementById('ghostPicker')?.classList.remove('show');});
 
 function switchTab(tab,el){
@@ -621,6 +628,27 @@ function switchTab(tab,el){
   if(tab==='preview'){
     const pane=document.getElementById('previewPane');
     pane.innerHTML=editor.innerHTML;
+    // strip font tags from pre blocks before highlighting
+    pane.querySelectorAll('pre font').forEach(f=>{const t=document.createTextNode(f.textContent);f.replaceWith(t);});
+    pane.querySelectorAll('pre [style]').forEach(el=>el.removeAttribute('style'));
+    // ensure code tags have language class for prism
+    pane.querySelectorAll('pre').forEach(pre=>{
+      const badge=pre.querySelector('.code-lang-badge');
+      const lang=badge?badge.textContent.trim():'';
+      let code=pre.querySelector('code');
+      if(!code){
+        // wrap plain text content in a code tag
+        const text=pre.textContent.replace(badge?badge.textContent:'','').trim();
+        pre.innerHTML='';
+        code=document.createElement('code');
+        code.textContent=text;
+        if(lang)code.className='language-'+lang;
+        pre.appendChild(code);
+        if(badge)pre.appendChild(badge);
+      } else if(lang&&!code.className){
+        code.className='language-'+lang;
+      }
+    });
     if(window.Prism)Prism.highlightAllUnder(pane);
     renderAllLatex(pane);
   }
